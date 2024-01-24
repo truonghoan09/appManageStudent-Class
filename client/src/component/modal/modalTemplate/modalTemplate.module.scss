@@ -1,0 +1,11 @@
+.outside{
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(158, 158, 158, 0.381);
+    position: fixed;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}

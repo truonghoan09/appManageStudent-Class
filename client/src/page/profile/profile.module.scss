@@ -1,0 +1,131 @@
+.containerPage{
+    width: 100vw;
+    min-height: 60vh;
+    padding: 5rem 10rem;
+    display: flex;
+    align-items: center;
+    .left{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .avatar{
+            border-radius: 50%;
+            height: 10rem;
+            width: 10rem;
+            padding: 2rem;
+        }
+        .avatar:hover{
+            scale: 1.015;
+        }
+        .editBtn{
+            border: 1px solid rgb(207, 207, 207);
+            padding: 0.3rem 0.8rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            svg{
+                height: 16px;
+                width: 16px;
+            }
+            &:hover{
+                background-color: rgb(240, 240, 240);
+            }
+            &:active{
+                background-color: rgb(250, 249, 249);
+            }
+        }
+    }
+    .inforBlock{
+        width: 20rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        font-size: large;
+        .mapBox{
+            height: 25rem;
+            width: 30rem;
+        }
+        .item{
+            cursor: pointer;
+        }
+        .mapInstructionsLabel{
+            font-size: 12px;
+            a{
+                color: gray;
+            }
+        }
+        .blockInput{
+            padding: 0.5rem 0rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            width: 20rem;
+            .containerInput{
+                font-size: 15px;
+                input{
+                    font-size: 1rem;
+                    padding: 0.3rem 0.5rem;
+                }
+            }   
+        }
+        .addProfile{
+            svg{
+                height: 17px;
+                width: 17px;
+            }
+            width: 100%;
+            padding: 0.7rem 0rem;
+            display: flex;
+            justify-content: center;
+            cursor: pointer;
+            &:hover{
+                background-color: rgba(128, 128, 128, 0.129);
+                svg{
+                    color: blue;
+                }
+            }
+            &:active{
+                background-color: rgba(189, 189, 189, 0.211) ;
+            }
+        }
+        .saveBtn{
+            border: 1px solid rgb(75, 75, 249);
+            width: fit-content;
+            padding: 0.2rem 1rem;
+            color: white;
+            background-color: rgb(24, 147, 255);
+            cursor: pointer;
+            &:hover{    
+                background-color: rgb(24, 147, 240);
+                border-color: rgb(216, 216, 216);
+            }
+            &:active{
+                background-color: rgb(67, 157, 241);
+            }
+        }
+    }
+}
+
+@media screen and (max-width : 1000px) {
+    .containerPage{
+        height: 100vh;
+        padding: 0;
+        justify-content: center;
+        .inforBlock{
+            .mapBox{
+                height: 20rem;
+                width: 20rem;
+            }
+        }
+    }
+}
+
+@media screen and (max-width : 500px) {
+    .containerPage{
+        width: 100vw;
+        height: 100vh;
+        padding: 0;
+        justify-content: center;
+        flex-direction: column;
+    }
+}

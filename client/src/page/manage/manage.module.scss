@@ -1,0 +1,36 @@
+.container{
+    .header{
+        width: 98vw;
+        position: fixed;
+        background-color: rgb(214, 214, 214);
+        padding: 1rem 1rem;
+        display: flex;
+        gap: 0.5rem;
+        justify-content: right;
+        .saveBtn, .exitBtn{
+            padding: 0.2rem 1rem;
+            border-radius: 0.2rem;
+            cursor: pointer;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+        }
+        .saveBtn:hover, .exitBtn:hover{
+            text-shadow: 2px 3px 10px white;
+            scale: 1.05;
+        }
+        .saveBtn{
+            background-color: rgb(2, 164, 2);
+            color: white;
+        }
+        .exitBtn{
+            // position: fixed;
+            // right: 1rem;
+            background-color: rgb(250, 66, 66);
+            color: white;
+            cursor: pointer;
+        }
+    }
+    .headerPlaceholder{
+        height: 4rem;
+    }
+}

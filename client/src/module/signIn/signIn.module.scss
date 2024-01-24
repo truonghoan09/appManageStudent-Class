@@ -1,0 +1,12 @@
+.container {
+    height: 60vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 2rem;
+    .containerLogin{
+        padding-top: 1rem;
+    }
+}

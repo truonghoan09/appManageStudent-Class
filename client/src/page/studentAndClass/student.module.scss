@@ -1,0 +1,131 @@
+
+.container {
+    min-height: 60vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 2rem;
+    .containerBlock{
+        border: 1px solid rgb(207, 206, 206);
+        width: 40vw;
+        .subHeader{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            .subHeaderItem{
+                display: flex;
+                justify-content: center;
+                padding: 0.5rem 0rem;
+                cursor: pointer;
+            }
+            .choosen{
+                background-color: rgb(237, 234, 234);
+                font-weight: 600;
+            }
+        }
+        .subHeaderShort{
+            display: none;
+            position: relative;
+            div{
+                width: 100%;
+                font-weight: 600;
+                background-color: rgb(237, 234, 234);
+                text-align: center;
+                justify-content: center;
+                padding: 0.5rem 0rem;
+            }
+            cursor: pointer;
+            .arrow{
+                position: absolute;
+                right: 0.5rem;
+                top: 0.3rem;
+            }
+            &:active{
+                .choosen{
+                    background-color: rgb(215, 215, 215);;
+                }
+            }
+            .active{
+                display: flex;
+            }
+
+            .inActive{
+                display: none;
+            }
+            .menuSubHeaderShortBox{
+                position: absolute;
+                top: 2.25rem;
+                flex-direction: column;
+                .subHeaderShortItem{
+                    font-weight: 100;
+                    &:hover{
+                        background-color: rgb(202, 202, 202);
+                    }
+                }
+            }
+        }
+        .outletBlock{
+            .studentBlock{
+                width: 100%;
+                border-bottom: 1px solid gray;
+                .classItem{
+                    cursor: pointer;
+                    border: 1px solid gray;
+                    border-bottom: none;
+                    padding: 0.5rem 1rem;
+                }
+                .classItem:hover{
+                    background-color: rgba(128, 128, 128, 0.211);
+                }
+            }
+            .notice{
+                padding: 1rem;
+                font-size: small;
+                font-style: italic;
+                text-align: center;
+            }
+            .addClass{
+                width: 100%;
+                padding: 0.7rem 0rem;
+                display: flex;
+                justify-content: center;
+                cursor: pointer;
+                svg{
+                    height: 23px;
+                    width: 23px;
+                }
+                &:hover{
+                    background-color: rgba(128, 128, 128, 0.211);
+                    svg{
+                        color: blue;
+                    }
+                }
+                &:active{
+                    background-color: rgba(189, 189, 189, 0.211) ;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .container {
+        .containerBlock{
+            width: 60%;
+        }
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .container {
+        .containerBlock{
+            .subHeader{
+                display: none;
+            }
+            .subHeaderShort{
+                display: flex;
+            }
+        }
+    }
+}

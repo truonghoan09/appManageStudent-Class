@@ -1,0 +1,420 @@
+.containerBox {
+    background-color: white;
+    color: black;
+    width: 40rem;
+    height: 60vh;
+    padding: 1rem 1.2rem;
+    overflow-y: scroll;
+    .header{
+        position: relative;
+        .title{
+            font-size: 20px;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+        }
+        .closeBtn{
+            cursor: pointer;
+            height: 20px;
+            width: 20px;
+            position: absolute;
+            padding: 0;
+            right: 0.5rem;
+            top: 0.5rem;
+            &:active{
+                color: rgb(89, 89, 89);
+            }
+        }
+    }
+    .body {
+        padding: 0.5rem 2rem;
+        display: flex;
+        flex-direction: column;
+        .blockInput{
+            border-radius: 4px;
+            border: 3px double rgb(202, 201, 201);
+            padding: 0.3rem 0.7rem;
+            margin: 0.5rem 0;
+            .label{
+                font-weight: 600;
+            }
+            input{
+                margin-top: 0.4rem;
+                width: 96%;
+                padding: 0.4rem 0.5rem;
+            }
+            .timeBlock{
+                margin-top: 0.4rem;
+                
+                .containerToggleSwitch{
+                    display: flex;
+                    margin-bottom: 1rem;
+                    .leftSide{
+                        padding-right: 1rem;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        .blockToggleSwitch{
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            .containerToggleicon{
+                                height: fit-content;
+                            }
+                            display: flex;
+                            gap: 0.5rem;
+                            .toggleSwitch{
+                                height: 30px;
+                                cursor: pointer;
+                            }
+                            .lableToggle{
+                                text-align: center;
+                                line-height: 27px;
+                            }
+                        }
+                    }
+                    .rightSide{
+                        padding-left: 1rem;
+                        border-left: 1px solid black;
+                        .linkToModal{
+                            text-decoration: underline;
+                            font-style: italic;
+                            color: rgb(89, 89, 236);
+                            cursor: pointer;
+                        }
+                    }
+                }
+                .BlockDaysPerWeek{
+                    display: flex;
+                    gap: 1rem;
+                    .select{
+                        padding: 0.2rem 0.3rem;
+                        border: 1px solid black;
+                        border-radius: 0.2rem;
+                        font-size: 1rem;
+                        .optionItem {
+                            font-size: 1rem;
+                        }
+                    }
+                }
+                .containerASectionInformation{
+                    padding-top: 1rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.4rem;
+                    .titleLesson{
+                        padding: 0.5rem 0rem;   
+                    }
+                    select{
+                        padding: 0.3rem 0.5rem;
+                        padding-right: 0.7rem;
+                        width: fit-content;
+                    }
+                    .block2Side{
+                        display: flex;
+                        gap: 0.4rem;
+                        .leftSide{
+                            width: 8rem;
+                            display: flex;
+                            flex-direction: column ;
+                            gap: 0.4rem;
+                            border-right: 1px solid black;
+                        }
+                        .rightSide {
+                            div{
+                                min-height: 1.7rem;
+                                line-height: 1.7rem;
+                                font-style: italic;
+                                font-size: 14px;
+                                margin-bottom: 0.3rem;
+                            }
+                            .blockTravelTime {
+                                display: flex;
+                                gap: 0.8rem;
+                                .editBtn{
+                                    cursor: pointer;
+                                    border: 1px solid black;
+                                    padding: 0.1rem 0.5rem;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    gap: 0.4rem;
+                                    svg{
+                                        height: 16px;
+                                        width: 16px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .blockDurations{
+                        display: flex;
+                        gap: 0.4rem;
+                        div{
+                            font-style: italic;
+                        }
+                    }
+                }
+                .line{
+                    width: 100%;
+                    border-bottom: 1px black dotted;
+                    padding: 1rem 0rem;
+                }
+                .blockOther{
+                    padding-left: 2rem;
+                    display: flex;
+                    gap: 1rem;
+                    .label{
+                        font-weight: 400;
+                    }
+                    .textInput{
+                        min-width: 87%;
+                        min-height: 5rem;
+                        overflow-y: scroll;
+                    }
+                    
+                }
+            }
+            .mapInstructionsLabel{
+                font-size: 12px;
+                a{
+                    color: gray;
+                }
+            }
+            .blockToggle{
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+                svg{
+                    cursor: pointer;
+                }
+            }
+            .feeStructure{
+                padding-left: 2rem;
+                .feeBlock{
+                    display: flex;
+                    gap: 0.2rem;
+                    align-items: center;
+                    .anItemOfFeeBlock{
+                        display: flex;
+                        align-items: center;
+                        gap: 0.2rem;
+                        input{
+                            max-width: 4rem;
+                        }
+                    }
+                }
+                .reviewBlock{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    .reviewInputBlock, .reviewCostPerLessonBlock{
+                        display: flex;
+                        gap: 0.2rem;
+                        .reviewInput{
+                            display: flex;
+                            gap: 0.2rem;
+                        }
+                    }
+                    
+                }
+            }
+            .studentQuantity{
+                padding: 0.5rem 0;
+            }
+            .containerFormStudent{
+                position: relative;
+                .interactionBlock{
+                    position: absolute;
+                    right: 1rem;
+                    top: 0.8rem;
+                    display: flex;
+                    gap: 1rem;
+                    .closeBtn, .arrowBtn{
+                        cursor: pointer;
+                        &:hover{
+                            color: rgb(86, 84, 84);
+                        }
+                        &:active{
+                            color: rgb(58, 57, 57);
+                        }
+                    }
+                    
+                }
+                margin-top: 1rem;
+                .linkToModalChooseStudent{
+                    text-decoration: underline;
+                    font-size: 0.9rem;
+                    color: rgb(51, 51, 232);
+                    cursor: pointer;
+                }
+                border: 1px solid gray;
+                padding: 0.5rem 1rem;
+                .blockInput{
+                    padding: 0.3rem 0.7rem;
+                    .label{
+                        font-style: italic;
+                    }
+                    .selectTag{
+                        padding: 0.3rem 0.5rem;
+                    }
+                }
+                .blockParents{
+                    margin: 0.2rem 1rem;
+                    padding: 0.2rem 0.5rem;
+                    border: 1px dotted black;
+                    .title{
+                        font-weight: 600;
+                    }
+                }
+            }
+            .addClass{
+                width: 100%;
+                cursor: pointer;
+                padding: 0.7rem 0rem;
+                display: flex;
+                justify-content: center;
+                margin: 0.5rem 0;
+                svg{
+                    height: 23px;
+                    width: 23px;
+                }
+                &:hover{
+                    background-color: rgba(128, 128, 128, 0.211);
+                    svg{
+                        color: blue;
+                    }
+                }
+                &:active{
+                    background-color: rgba(189, 189, 189, 0.211) ;
+                }
+            }
+        }
+        .blockBtnFinal{
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            .cancelBtn, .saveBtn{
+                width: fit-content;
+                padding: 0.4rem 1rem;
+                border: solid 1px red;
+                background-color: red;
+                color: white;
+                border-radius: 4px;
+                user-select: none;
+                cursor: pointer;      
+                &:hover{
+                    box-shadow: 0px 0px 10px rgb(158, 156, 156);
+                }          
+                &:active{
+                    border: solid 1px red;
+                    background-color: rgb(255, 59, 59);
+                }
+            }
+            .saveBtn{
+                border: solid 1px rgb(50, 207, 55);
+                background-color: rgb(50, 207, 55);
+                &:active{
+                    border: solid 1px rgb(50, 207, 55);
+                    background-color: rgb(86, 215, 90);
+                }
+
+            }
+        }
+    }
+}
+
+
+@media screen and (max-width: 700px) {
+    .containerBox{
+        width: 70vw;
+        .body{
+            .blockInput{
+                .timeBlock{
+                    
+                    .containerToggleSwitch{
+                        display: flex;
+                        margin-bottom: 1rem;
+                        .leftSide{
+                            padding-right: 1rem;
+                            display: flex; 
+                            justify-content: center; 
+                            align-items: center;
+                            .blockToggleSwitch{
+                                display: flex;
+                                gap: 0.5rem;
+                                .toggleSwitch{
+                                    height: 30px;
+                                    cursor: pointer;
+                                }
+                                .lableToggle{
+                                    text-align: center;
+                                    font-size: 0.8rem;
+                                    line-height: 27px;
+                                }
+                            }
+                            
+                        }
+                        .rightSide{
+                            padding-left: 1rem;
+                            border-left: 1px solid black;
+                            display: flex; 
+                            justify-content: center;
+                            align-items: center;
+                            .linkToModal{
+                                text-decoration: underline;
+                                font-size: 0.8rem;
+                                font-style: italic;
+                                color: rgb(89, 89, 236);
+                                cursor: pointer;
+                            }
+                        }
+                    }
+                    .containerASectionInformation{
+                        .block2Side{
+                            display: flex;
+                            flex-direction: column;
+                            .leftSide{
+                                border-right: none;
+                                padding-bottom: 1rem;
+                                border-bottom: 1px solid black;
+                            }
+                        }
+                    }
+                }
+                .feeStructure{
+                    font-size: 0.8rem;
+                    display: flex;
+                    align-items: left;
+                    flex-direction: column;
+                    .feeBlock{
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: left;
+                        .anItemOfFeeBlock{
+                            display: flex;
+                            justify-content: left;
+                        }
+                    }
+                    .reviewBlock{
+                        font-size: 0.8rem;
+                        .reviewInputBlock, .reviewCostPerLessonBlock{
+                            display: flex;
+                            flex-direction: column;
+                        }
+                    }
+                }
+                .containerFormStudent{
+                    .interactionBlock{
+                        scale: 0.7;
+                        right: 0rem;
+                        top: 0.3rem;
+                    }
+                    .blockInput{
+                        padding-right: 1.2rem;
+                    }
+                }
+            }
+
+        }
+    }
+}

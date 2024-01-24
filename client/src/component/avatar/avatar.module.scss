@@ -1,0 +1,38 @@
+svg{
+    height: 30px;
+    width: 30px;
+}
+.avt{
+    object-fit: cover;
+    height: 2rem;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+}
+.avt:hover{
+    scale: 1.05;
+}
+.menuOn{
+    position: fixed;
+    background-color: white;
+    z-index: 100;
+    top: 3.5rem;
+    right: 1.4rem;
+    display: flex;
+    border: 1px solid black;
+    flex-direction: column;
+    gap: 0.3rem;
+    // padding: 0.5rem 1rem;
+
+    .menuItem{
+        padding: 0.2rem 1rem;
+        padding-right: 5rem;
+        cursor: pointer;
+    }
+    .menuItem:hover{
+        background-color: rgb(233, 233, 233);
+    }
+}
+.menuOff{
+    display: none;
+}
