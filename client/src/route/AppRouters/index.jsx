@@ -1,7 +1,6 @@
 import { useRoutes } from "react-router-dom"
 import PATH from "../../config/routeConfig"
 import StudentAndClass from "../../page/studentAndClass"
-import Manage from "../../page/manage"
 import Profile from "../../page/profile"
 import Layout1 from "../../component/layout/layout1"
 import Home from "../../page/home"
