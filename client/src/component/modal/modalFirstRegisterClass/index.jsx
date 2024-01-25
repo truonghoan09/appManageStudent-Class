@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './modalFirstRegister.module.scss'
-import { onFirstRegisterClass, onModalSameTravelTimeAction, reRenderSameTravelTimeAction, sharedTravelTimeAction } from '../../../redux/action';
+import { addAStudentAction, onFirstRegisterClass, onModalSameTravelTimeAction, reRenderSameTravelTimeAction, sharedTravelTimeAction } from '../../../redux/action';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ModalTemplate from '../modalTemplate';
@@ -385,10 +385,19 @@ const ModalFirstRegisterClass = () => {
         alert('Choose Student handle from student ' + index)
     }
 
+  const data = useSelector(state => state.addAStudentReducer.data)
+    const loading = useSelector(state => state.addAStudentReducer.loading)
+    const error = useSelector(state => state.addAStudentReducer.error)
+
     const handleSaveClass = () => {
-        console.log('NEW CLASS: ',newClass);
-        console.log('STUDENT ARRAY: ', studentArr)
+        dispatch(addAStudentAction(studentArr));
     }
+
+    useEffect(() => {
+        console.log("data: ",data)
+        console.log("loading: ",loading)
+        console.log("error: ",error)
+    }, [data, error, loading])
 
     const [backupNumberOfLessons, setBackupNumberOfLessons] = useState(1);
 

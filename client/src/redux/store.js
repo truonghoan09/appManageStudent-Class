@@ -7,6 +7,7 @@ import onFirstRegisterClassModalReducer from "./reducer/onFirstRegisterClassModa
 import onModalSameTravelTimeReducer from "./reducer/onModalSameTravelTimeReducer"
 import sharedTravelTimeReducer from "./reducer/sharedTravelTimeReducer"
 import reRenderSameTravelTimeReducer from "./reducer/reRenderSameTravelTimeReducer"
+import addAStudentReducer from "./reducer/addAStudentReducer"
 
 
 const rootReducer = combineReducers({
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
     onModalSameTravelTimeReducer,
     sharedTravelTimeReducer,
     reRenderSameTravelTimeReducer,
+    addAStudentReducer,
 })
 
 const store = createStore(rootReducer, applyMiddleware(thunk));

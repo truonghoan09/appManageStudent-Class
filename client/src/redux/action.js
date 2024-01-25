@@ -1,4 +1,4 @@
-import { SET_CLASSNOW, IS_SIGNIN, SET_DATA, ON_FIRST_REGISTER_CLASS, ON_MODAL_SAME_TRAVEL_TIME, SET_SHARED_TRAVEL_TIME, RE_RENDER_SAME_TRAVEL_TIME } from "./type"
+import { SET_CLASSNOW, IS_SIGNIN, SET_DATA, ON_FIRST_REGISTER_CLASS, ON_MODAL_SAME_TRAVEL_TIME, SET_SHARED_TRAVEL_TIME, RE_RENDER_SAME_TRAVEL_TIME, ADD_A_STUDENT_REQUEST, ADD_A_STUDENT_SUCCESS, ADD_A_STUDENT_FAILURE } from "./type"
 
 export const setClassnow  = (classNow) => {
     return({
@@ -48,3 +48,21 @@ export const reRenderSameTravelTimeAction = (boolean) => {
         payload: boolean,
     })
 } 
+
+export const addAStudentAction = (data) => {
+	return async (dispatch) => {
+        dispatch({type: ADD_A_STUDENT_REQUEST})
+        try {
+            let response = await fetch ("http://localhost:8888/.netlify/functions/addAStudent", {
+                method: 'post',
+                body: JSON.stringify({     
+                    data: data,
+                })
+            })
+            let responseData = await response.json();
+            dispatch({type: ADD_A_STUDENT_SUCCESS, payload: responseData})
+        } catch (error) {
+            dispatch({type: ADD_A_STUDENT_FAILURE , error: error.message})
+        }
+    }
+};
