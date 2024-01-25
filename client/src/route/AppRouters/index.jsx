@@ -34,10 +34,6 @@ const AppRouters = () => {
             ]
         },
         {
-            path: PATH.MANAGE,
-            element: <Manage />,
-        },
-        {
             path: PATH.PROFILE,
             element: <Layout1 />,
             children: [
