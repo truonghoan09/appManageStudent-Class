@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './modalFirstRegister.module.scss'
 import { addAStudentAction, onFirstRegisterClass, onModalSameTravelTimeAction, reRenderSameTravelTimeAction, sharedTravelTimeAction } from '../../../redux/action';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ModalTemplate from '../modalTemplate';
 import ModalSetSameTravelTime from '../modalSetSameTravelTime';
@@ -10,6 +10,8 @@ const ModalFirstRegisterClass = () => {
     const dispatch = useDispatch();
 
 
+    const nameRef = useRef(null)
+    const locationRef = useRef(null)
     
 
     const [fixedSchedule, setFixedSchedule] = useState(true);
@@ -71,6 +73,7 @@ const ModalFirstRegisterClass = () => {
     let initStudentInfor = {id: firstId, name: "", age: "", email: "", sex: "---", phone: "", address: "", parents: {name: "", age: "", email: "", sex: "---", phone: "", address: ""}}
 
 
+
     const [newClass, setNewClass] = useState({
         name: "",
         fee : "",
@@ -84,7 +87,14 @@ const ModalFirstRegisterClass = () => {
         historyRollCall: [],
     })
 
+    const [redNotice, setRedNotice] = useState({
+        name: false,
+        location: false,
+        nameStudent: [false],
+    })
+
     const [studentArr, setStudentArr] = useState([initStudentInfor]);
+
 
 
     const ordinalNumber = (number) => {
@@ -130,6 +140,7 @@ const ModalFirstRegisterClass = () => {
             setDaysChoosen(newArr2);
             initClass.schedule = [...newArr2]
         }
+        const newRedNotice = {...redNotice};
         switch (key) {
             case "map":
                 if (data.indexOf(' ') !== -1) {
@@ -174,8 +185,16 @@ const ModalFirstRegisterClass = () => {
 
 
                 case "name": 
+                    newRedNotice.name = false;
+                    initClass[key] = data;
+                    setRedNotice(newRedNotice);
+                    break;
                 case "location":
-                initClass[key] = data;
+                    newRedNotice.location = false;
+                    initClass[key] = data;
+                    setRedNotice(newRedNotice);
+                    break;
+
          
             default:
                 break;
@@ -294,8 +313,11 @@ const ModalFirstRegisterClass = () => {
         let cloneStudentArr = [...studentArr];
         let index = value.i;
         let data = value.iv
+        const newRedNotice = {...redNotice}; 
         switch (key) {
             case "name":
+                newRedNotice.nameStudent[index] = false;
+                setRedNotice(newRedNotice);
             case "sex":
             case "address":
             case "email":
@@ -350,29 +372,40 @@ const ModalFirstRegisterClass = () => {
             default:
                 break;
         }
-        setNewClass(cloneStudentArr);
+        setStudentArr(cloneStudentArr);
     }
 
+
     const handleClickAddStudentInClass = () => {
-        let cloneShowStudent = [...showStudent];
+        let cloneShowStudent = [...showStudent, false];
         let cloneStudentArr = [...studentArr];
         let cloneNewClass = {...newClass};
+        let cloneRedNotice = {...redNotice};
         initStudentInfor.id = createAnIDStudent();
         cloneNewClass.students.push(initStudentInfor.id);
         cloneStudentArr.push(initStudentInfor);
-        cloneShowStudent.push(false);
+        cloneRedNotice.nameStudent.push(false);
         setNewClass(cloneNewClass);
         setShowStudent(cloneShowStudent)
         setStudentArr(cloneStudentArr);
+        setRedNotice(cloneRedNotice);
     }
+
 
     const handleClickDeleteAStudent = (i) => {
         let cloneNewClass = {...newClass};
         let cloneStudentArr = [...studentArr];
+        let cloneShowStudent = [...showStudent];
+        let cloneRedNotice = {...redNotice};
         cloneNewClass.students.splice(i, 1);
         cloneStudentArr.splice(i,1);
+        cloneRedNotice.nameStudent.splice(i, 1);
+        cloneShowStudent.splice(i, 1);
         setNewClass(cloneNewClass);
         setStudentArr(cloneStudentArr);
+        setShowStudent(cloneShowStudent);
+        setRedNotice(cloneRedNotice);
+
     }
 
     const handleSetShowStudent = (index, value) => {
@@ -389,8 +422,64 @@ const ModalFirstRegisterClass = () => {
     const loading = useSelector(state => state.addAStudentReducer.loading)
     const error = useSelector(state => state.addAStudentReducer.error)
 
+    const ScrollToRef = (ref) => {
+        if (typeof(ref) === "string") {
+            const targetElement = document.getElementById(ref);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'center',
+                });
+              }
+        } else {
+            ref.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+        }
+    }
+
+
+    const checkAllValue = () => {
+        let refTo = null;
+        let result = true;
+        let newNamestudent = [...redNotice.nameStudent];
+        for (let i = studentArr.length; i>0; i--) {
+            if(studentArr[i-1].name === "") {
+                result = false;
+                refTo = `studentName${i-1}`;
+                newNamestudent[i-1] = true;
+            }
+        }
+        setRedNotice((prevRedNotice) => ({
+            ...prevRedNotice,
+            nameStudent : newNamestudent,
+        }))
+        if(newClass.location === "") {
+            result = false;
+            refTo = locationRef;
+            setRedNotice((prevState) => ({
+                ...prevState,
+                location: true,
+            }))
+        }
+        if(newClass.name === "") {
+            refTo = nameRef
+            result = false;
+            setRedNotice((prevState) => ({
+                ...prevState,
+                name: true,
+            }))
+        }
+
+        if(refTo !== null) {
+            ScrollToRef(refTo);
+        }
+       
+        
+        return(result);
+    }
+
     const handleSaveClass = () => {
-        dispatch(addAStudentAction(studentArr));
+        console.log('check Value after Click Save: ',checkAllValue());
+        // dispatch(addAStudentAction(studentArr));
     }
 
     useEffect(() => {
@@ -426,12 +515,12 @@ const ModalFirstRegisterClass = () => {
                     </svg>
                 </div>
                 <div className={styles.body}>
-                    <div className={styles.blockInput}>
-                        <div className={styles.label}>Class Name:</div>
+                    <div className={`${styles.blockInput} ${redNotice.name && styles.redNotice}`}>
+                        <div ref={nameRef} className={`${styles.label}`}>Class Name:</div>
                         <input onChange={(e) => {handleChange("name", e.target.value)}}/>
                     </div>
-                    <div className={styles.blockInput}>
-                        <div className={styles.label}>Location:</div>
+                    <div className={`${styles.blockInput} ${redNotice.location && styles.redNotice}`}>
+                        <div ref={locationRef} className={`${styles.label}`}>Location:</div>
                         <input onChange={(e) => {handleChange("location", e.target.value)}}/>
                     </div>
                     <div className={styles.blockInput}>
@@ -640,8 +729,8 @@ const ModalFirstRegisterClass = () => {
                                         }
                                     </div>
                                     <div className={styles.linkToModalChooseStudent} onClick={() => {handleClickChooseStudent(i)}}>Choose a student in "My Students"?</div>
-                                    <div className={styles.blockInput}>
-                                        <div className={styles.label}>Name</div>
+                                    <div className={`${styles.blockInput} ${redNotice.nameStudent[i] && styles.redNotice}`}>
+                                        <div id={`studentName${i}`} className={styles.label}>Name</div>
                                         <input placeholder={`Enter student's name`} onChange={(e) => {handleChangeStudent("name", {i: i, iv: e.target.value})}} />
                                     </div>
                                     {!showStudent[i] && 
@@ -731,6 +820,8 @@ const ModalFirstRegisterClass = () => {
                     </div>
                 </div>
             </div>
+
+
         </>
     )
 }

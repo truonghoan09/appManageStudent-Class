@@ -21,9 +21,6 @@ const Home = () => {
     return(
         <>
             <div className={styles.container}>
-                <div className={styles.header}>
-                    <Link className={styles.manage} to={"/manage"}>Manage</Link>
-                </div>
                 <div className={styles.headerPlaceholder}></div>
                 
                 {/* {(data[classNow] && data[classNow].task) && 

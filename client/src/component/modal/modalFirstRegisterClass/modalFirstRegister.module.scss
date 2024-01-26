@@ -29,6 +29,7 @@
         padding: 0.5rem 2rem;
         display: flex;
         flex-direction: column;
+        
         .blockInput{
             border-radius: 4px;
             border: 3px double rgb(202, 201, 201);
@@ -288,6 +289,10 @@
                     background-color: rgba(189, 189, 189, 0.211) ;
                 }
             }
+        }
+        .redNotice {
+            border-color: rgb(248, 136, 136);
+            /* hoặc các thuộc tính khác */
         }
         .blockBtnFinal{
             display: flex;
