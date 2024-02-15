@@ -5,7 +5,7 @@ const PATH = {
     MANAGE: '/manage',
     PROFILE: '/profile/:id',
     DOC: '/doc',
-        MAP: 'map',
+    MAP: 'map',
 }
 
 export default PATH

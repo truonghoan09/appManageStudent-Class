@@ -7,7 +7,19 @@ import onFirstRegisterClassModalReducer from "./reducer/onFirstRegisterClassModa
 import onModalSameTravelTimeReducer from "./reducer/onModalSameTravelTimeReducer"
 import sharedTravelTimeReducer from "./reducer/sharedTravelTimeReducer"
 import reRenderSameTravelTimeReducer from "./reducer/reRenderSameTravelTimeReducer"
-import addAStudentReducer from "./reducer/addAStudentReducer"
+import addStudentsReducer from "./reducer/addStudentsReducer"
+import getAllStudentsNameReducer from "./reducer/getAllStudentsNameReducer"
+import setStudentFromMyStudentReducer from "./reducer/setStudentFromMyStudentReducer"
+import onModalChooseAStudentInMyStudentReducer from "./reducer/onModalChooseAStudentInMyStudentReducer"
+import addClassReducer from "./reducer/addClassReducer"
+import getUserDataReducer from "./reducer/getUserDataReducer"
+import onModalAddHomeworkReducer from "./reducer/onModalAddHomeworkReducer"
+import saveAHomeworkReducer from "./reducer/saveAHomeworkReducer"
+import updateNoteScheduleReducer from "./reducer/updateNoteScheduleReducer"
+import onModalUpdateNextLessonsReducer from "./reducer/onModalUpdateNextLessonsReducer"
+import updateScheduleNextLessonsReducer from "./reducer/updateScheduleNextLessonsReducer"
+import onModalNoticeReducer from "./reducer/onModalNoticeReducer"
+import onModalDeleteLessonsReducer from "./reducer/onModalDeleteLessonsReducer"
 
 
 const rootReducer = combineReducers({
@@ -18,7 +30,19 @@ const rootReducer = combineReducers({
     onModalSameTravelTimeReducer,
     sharedTravelTimeReducer,
     reRenderSameTravelTimeReducer,
-    addAStudentReducer,
+    addStudentsReducer,
+    getAllStudentsNameReducer,
+    setStudentFromMyStudentReducer,
+    onModalChooseAStudentInMyStudentReducer,
+    addClassReducer,
+    getUserDataReducer,
+    onModalAddHomeworkReducer,
+    saveAHomeworkReducer,
+    updateNoteScheduleReducer,
+    onModalUpdateNextLessonsReducer,
+    updateScheduleNextLessonsReducer,
+    onModalNoticeReducer,
+    onModalDeleteLessonsReducer,
 })
 
 const store = createStore(rootReducer, applyMiddleware(thunk));

@@ -1,10 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './modalFirstRegister.module.scss'
-import { addAStudentAction, onFirstRegisterClass, onModalSameTravelTimeAction, reRenderSameTravelTimeAction, sharedTravelTimeAction } from '../../../redux/action';
+import { addClassAction, addStudentsAction, onFirstRegisterClass, onModalChooseAStudentInMyStudents, onModalSameTravelTimeAction, reRenderSameTravelTimeAction, setStudentFromMyStudent, sharedTravelTimeAction } from '../../../redux/action';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ModalTemplate from '../modalTemplate';
 import ModalSetSameTravelTime from '../modalSetSameTravelTime';
+import BlockStudentInfoPreview from '../../blockStudentInfoPreview';
+import ModalChooseAStudentFromMyStudents from '../modalChooseAStudentFromMyStudent';
 
 const ModalFirstRegisterClass = () => {
     const dispatch = useDispatch();
@@ -12,14 +14,22 @@ const ModalFirstRegisterClass = () => {
 
     const nameRef = useRef(null)
     const locationRef = useRef(null)
-    
+    const linkOnlineRef = useRef(null)
+
+    const [onlineClass, setOnlineClass] = useState(false)
+
+
 
     const [fixedSchedule, setFixedSchedule] = useState(true);
 
     const initDaysChoosenItem = {day: "Monday", times: "00:00", duration: 1, travelTime: "00:00"}
 
 
-    const [daysChoosen, setDaysChoosen] = useState([initDaysChoosenItem]);
+    const [daysChoosen, setDaysChoosen] = useState([{day: "Monday", times: "00:00", duration: 1, travelTime: "00:00"}]);
+
+    useEffect(() => {
+        console.log(daysChoosen);
+    }, [daysChoosen])
 
     const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const timesInDay = [
@@ -75,25 +85,30 @@ const ModalFirstRegisterClass = () => {
 
 
     const [newClass, setNewClass] = useState({
+        id: "",
         name: "",
         fee : "",
         schedule: [initDaysChoosenItem],
         location: "",
         map: "",
-        rollCall: [],
+        linkOnline: "",
+        rollCall: "",
         students: [firstId],
-        dayOff: [],
-        homeWork: [],
-        historyRollCall: [],
+        dayOff: "",
+        homeWork: "",
+        historyRollCall: "",
     })
 
     const [redNotice, setRedNotice] = useState({
         name: false,
         location: false,
+        linkOnline: false,
         nameStudent: [false],
     })
 
     const [studentArr, setStudentArr] = useState([initStudentInfor]);
+
+    const [StudentFromMyStudents, setStudentFromMyStudents] = useState([null])
 
 
 
@@ -134,12 +149,35 @@ const ModalFirstRegisterClass = () => {
 
     const handleChange = async (key, data) => {
         let initClass = {...newClass};
-        const workInChangeTimesProp = (i, iv) => {
+        const workInChangeTimesProp = async (i, iv, key) => {
             let newArr2 = [...daysChoosen];
-            newArr2[i][key] = takeValue(key, iv);
-            setDaysChoosen(newArr2);
+            newArr2.map((v, index) => {
+                if(i === index) {
+                    const dataNeedSet = takeValue(key, iv);
+                    switch (key) {
+                        case "day":
+                            console.log('change, ',index);
+                            newArr2[index].day = dataNeedSet;
+                            break;
+                        case "times":
+                            newArr2[index].times = dataNeedSet;
+                            break;
+                        case "duration":
+                            newArr2[index].duration = dataNeedSet;
+                            break;
+                        case "travelTime":
+                            newArr2[index].travelTime = dataNeedSet;
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                }
+            })
+            await setDaysChoosen(newArr2);
             initClass.schedule = [...newArr2]
         }
+        
         const newRedNotice = {...redNotice};
         switch (key) {
             case "map":
@@ -163,7 +201,7 @@ const ModalFirstRegisterClass = () => {
                     let x = data -  newArr.length;
                     for (let i=1; i <= x; i++) {
                         newUseSharedTravelTimeArr.push(false);
-                        newArr.push(initDaysChoosenItem);
+                        newArr.push({day: "Monday", times: "00:00", duration: 1, travelTime: "00:00"});
                     }
                 } else {
                     let x = newArr.length - data;
@@ -180,7 +218,7 @@ const ModalFirstRegisterClass = () => {
                 case "day":
                 case "times": 
                 case "duration": 
-                    workInChangeTimesProp(data.i, data.iv)
+                    workInChangeTimesProp(data.i, data.iv, key)
                     break;
 
 
@@ -190,11 +228,12 @@ const ModalFirstRegisterClass = () => {
                     setRedNotice(newRedNotice);
                     break;
                 case "location":
+                case "linkOnline":
                     newRedNotice.location = false;
+                    newRedNotice.linkOnline = false;
                     initClass[key] = data;
                     setRedNotice(newRedNotice);
                     break;
-
          
             default:
                 break;
@@ -215,7 +254,7 @@ const ModalFirstRegisterClass = () => {
         } else {
             if(renderFromOther) {
                 setDaysChoosen([initDaysChoosenItem]);
-                initNewClass.schedule = daysChoosen;
+                initNewClass.schedule = [...daysChoosen];
                 setNewClass(initNewClass);
                 setRenderFromOther(false);
             }
@@ -242,7 +281,7 @@ const ModalFirstRegisterClass = () => {
             setUseSharedTravelTime(newUseSharedTravelTimeArr);
             dispatch(reRenderSameTravelTimeAction(false));
         }
-    },  [sharedTravelTime])
+    },  [sharedTravelTime, reRenderSameTravelTime])
 
     const handleEditTravelTime = (index) => {
         let newUseSharedTravelTimeArr = [...useSharedTravelTime];
@@ -309,6 +348,8 @@ const ModalFirstRegisterClass = () => {
    
     const [showStudent, setShowStudent] = useState([false]);
 
+    const [choosenInMyStudents, setChoosenInMyStudents] = useState([false]);
+
     const handleChangeStudent = (key, value) => {
         let cloneStudentArr = [...studentArr];
         let index = value.i;
@@ -318,6 +359,7 @@ const ModalFirstRegisterClass = () => {
             case "name":
                 newRedNotice.nameStudent[index] = false;
                 setRedNotice(newRedNotice);
+                setSearchWord(data);
             case "sex":
             case "address":
             case "email":
@@ -378,6 +420,8 @@ const ModalFirstRegisterClass = () => {
 
     const handleClickAddStudentInClass = () => {
         let cloneShowStudent = [...showStudent, false];
+        let cloneStudentFromMyStudents = [...StudentFromMyStudents, null];
+        let cloneChoosenInMyStudents = [...choosenInMyStudents, false];
         let cloneStudentArr = [...studentArr];
         let cloneNewClass = {...newClass};
         let cloneRedNotice = {...redNotice};
@@ -389,23 +433,42 @@ const ModalFirstRegisterClass = () => {
         setShowStudent(cloneShowStudent)
         setStudentArr(cloneStudentArr);
         setRedNotice(cloneRedNotice);
+        setChoosenInMyStudents(cloneChoosenInMyStudents);
+        setStudentFromMyStudents(cloneStudentFromMyStudents);
     }
 
 
-    const handleClickDeleteAStudent = (i) => {
+
+    const handleClickDeleteAStudent = async (i) => {
         let cloneNewClass = {...newClass};
         let cloneStudentArr = [...studentArr];
         let cloneShowStudent = [...showStudent];
+        let cloneChoosenInMyStudents = [...choosenInMyStudents];
         let cloneRedNotice = {...redNotice};
-        cloneNewClass.students.splice(i, 1);
-        cloneStudentArr.splice(i,1);
-        cloneRedNotice.nameStudent.splice(i, 1);
-        cloneShowStudent.splice(i, 1);
-        setNewClass(cloneNewClass);
-        setStudentArr(cloneStudentArr);
-        setShowStudent(cloneShowStudent);
-        setRedNotice(cloneRedNotice);
+        let cloneStudentFromMyStudents = [...StudentFromMyStudents];
+        await new Promise((resolve) => {
+            if(i === 0 && studentArr.length === 1) {
+                cloneStudentArr[0] = initStudentInfor;
+                cloneStudentArr[0].id = createAnIDStudent();
+                cloneChoosenInMyStudents[0] = false;
+            } else {
+                cloneStudentArr.splice(i,1);
+                cloneNewClass.students.splice(i, 1);
+                cloneRedNotice.nameStudent.splice(i, 1);
+                cloneShowStudent.splice(i, 1);
+                cloneChoosenInMyStudents.splice(i,1);
+                cloneStudentFromMyStudents.splice(i,1);
+            }
 
+            resolve();
+        })
+        await setNewClass(cloneNewClass);
+        await setStudentArr(cloneStudentArr);
+        await setShowStudent(cloneShowStudent);
+        await setRedNotice(cloneRedNotice);        
+        await setChoosenInMyStudents(cloneChoosenInMyStudents);
+        await setStudentFromMyStudents(cloneStudentFromMyStudents);
+        
     }
 
     const handleSetShowStudent = (index, value) => {
@@ -413,14 +476,17 @@ const ModalFirstRegisterClass = () => {
         cloneShowStudent[index] = value;    
         setShowStudent(cloneShowStudent);
     }
+    //state này để quản lý việc bạt/ tắt cùa modal chọn một student trong my student
+    const onModalChooseAStudentInMyStudentState = useSelector(state => state.onModalChooseAStudentInMyStudentReducer.onModal)
 
     const handleClickChooseStudent = (index) => {
-        alert('Choose Student handle from student ' + index)
+        dispatch(onModalChooseAStudentInMyStudents(true, index));
+        
+        // let cloneChoosenInMyStudents = [...choosenInMyStudents];
+        // cloneChoosenInMyStudents[index] = true;
+        // setChoosenInMyStudents(cloneChoosenInMyStudents);
     }
 
-  const data = useSelector(state => state.addAStudentReducer.data)
-    const loading = useSelector(state => state.addAStudentReducer.loading)
-    const error = useSelector(state => state.addAStudentReducer.error)
 
     const ScrollToRef = (ref) => {
         if (typeof(ref) === "string") {
@@ -450,18 +516,29 @@ const ModalFirstRegisterClass = () => {
         }
         setRedNotice((prevRedNotice) => ({
             ...prevRedNotice,
-            nameStudent : newNamestudent,
+            nameStudent: newNamestudent,
         }))
-        if(newClass.location === "") {
-            result = false;
-            refTo = locationRef;
-            setRedNotice((prevState) => ({
-                ...prevState,
-                location: true,
-            }))
+        if(!onlineClass) {
+            if(newClass.location === "") {
+                result = false;
+                refTo = locationRef;
+                setRedNotice((prevState) => ({
+                    ...prevState,
+                    location: true,
+                }))
+            }
+        } else {
+            if(newClass.linkOnline === "") {
+                result = false;
+                refTo = linkOnlineRef;
+                setRedNotice((prevState) => ({
+                    ...prevState,
+                    linkOnline: true
+                }))
+            }
         }
         if(newClass.name === "") {
-            refTo = nameRef
+            refTo = nameRef;
             result = false;
             setRedNotice((prevState) => ({
                 ...prevState,
@@ -478,15 +555,23 @@ const ModalFirstRegisterClass = () => {
     }
 
     const handleSaveClass = () => {
-        console.log('check Value after Click Save: ',checkAllValue());
-        // dispatch(addAStudentAction(studentArr));
-    }
+        const idClass = createAnIDStudent();
+        let cloneNewClass = {...newClass};
+        if(checkAllValue()) {
+            cloneNewClass.id = idClass;
+            const fetchData = async () => {
+                await dispatch(addStudentsAction({data: studentArr, uid: localStorage.getItem("uid")}));
+                await dispatch(addClassAction(idClass, cloneNewClass));
+                await location.reload()             
+            }
+            if(localStorage.getItem("uid")) {
+                fetchData();
+            } else {
+                console.log('Please Log in Frist!');
 
-    useEffect(() => {
-        console.log("data: ",data)
-        console.log("loading: ",loading)
-        console.log("error: ",error)
-    }, [data, error, loading])
+            }
+        }
+    }
 
     const [backupNumberOfLessons, setBackupNumberOfLessons] = useState(1);
 
@@ -504,9 +589,94 @@ const ModalFirstRegisterClass = () => {
         setNewClass(cloneNewClass);
     }, [fee, backupNumberOfLessons, numberOfLessons])
 
+    const allStudentsName = useSelector(state => state.getAllStudentsNameReducer.data.data);    
+    
+    const [resultSearch, setResultSearch] = useState([]);
+
+    const [searchWord, setSearchWord] = useState('');
+    const [studentFocus, setStudentFocus] = useState(-1);
+
+    const searchFunc = (word) => {
+        let cloneResultSearch = [...allStudentsName];
+        let newResult = [];
+        cloneResultSearch.map((v, i) => {
+            let lKey = v.key.toLowerCase();
+            let lWord = word.toLowerCase();
+            if(lKey.indexOf(lWord) !== -1) {
+                newResult.push(v);
+            }
+        })
+        setResultSearch(newResult);
+    }
+    
+    const callSearch = () => {
+        if(searchWord !== "") {
+            searchFunc(searchWord);
+        } else {
+            setResultSearch(allStudentsName);
+        }
+    }
+
+    useEffect(() => {
+        callSearch()
+
+    }, [searchWord])
+
+    //Bật susggest box lên
+    const handleStudentFocus = (index) => {
+        setResultSearch(allStudentsName);
+        setStudentFocus(index)
+        setSearchWord(studentArr[index].name)
+        callSearch()
+    }
+
+    //setTimeout, mục đích để có thời gian cho dispatch tại vị trí suggest block Item 
+    //có thể gởi đi trước khi onBlur được kích hoạt
+    const handleStudentBlur = () => {
+        setTimeout(() => {
+            setStudentFocus(-1)
+        }, [500])
+    }
+
+    //Func xử lý việc hiển thị bằng dạng nhập hay dạng xem đối với student 
+    //khi có tương tác từ suggest box
+    const handleClickFromSuggestBlock = (i, v) => {
+        dispatch(setStudentFromMyStudent(i, v));
+        let cloneChoosenInMyStudents = [...choosenInMyStudents]
+        cloneChoosenInMyStudents[i] = true;
+        setChoosenInMyStudents(cloneChoosenInMyStudents)
+    }
+
+    //State này để quản truyền thông tin từ các nguồn khác nhau về việc student thứ mấy sẽ được chọn từ "myStudents" 
+    //và data của Student được chọn là gì
+    const StudentFromMyStudentState = useSelector(state => state.setStudentFromMyStudentReducer.data)
+
+    useEffect(() => {
+        //Mảng "StudentFromMyStudents" dùng để render ra cho component blockStudentInfoPreview
+        if(StudentFromMyStudentState.value) {
+            let cloneChoosenInMyStudents = [...choosenInMyStudents]
+            cloneChoosenInMyStudents[StudentFromMyStudentState.index] = true;
+            setChoosenInMyStudents(cloneChoosenInMyStudents)
+            let cloneStudentFromMyStudents = [...StudentFromMyStudents];
+            let cloneStudentArr = [...studentArr];
+            let cloneNewClass = {...newClass};
+            cloneNewClass.students[StudentFromMyStudentState.index] = StudentFromMyStudentState.value.value.id;
+            setNewClass(cloneNewClass);
+            cloneStudentFromMyStudents[StudentFromMyStudentState.index] = StudentFromMyStudentState.value.value
+            cloneStudentArr[StudentFromMyStudentState.index] = StudentFromMyStudentState.value.value
+            setStudentFromMyStudents(cloneStudentFromMyStudents);
+            setStudentArr(cloneStudentArr);
+        }
+    }, [StudentFromMyStudentState]);
+
+    useEffect(() => {
+        console.log(newClass);
+    }, [newClass])
+
     return(
         <>
             {onModalSameTravelTime && <ModalTemplate element={<ModalSetSameTravelTime/>}/>}
+            {onModalChooseAStudentInMyStudentState && <ModalTemplate element={<ModalChooseAStudentFromMyStudents/>}/>}
             <div className={styles.containerBox}>
                 <div className={styles.header}>
                     <div className={styles.title}>Create A Class</div>
@@ -519,15 +689,35 @@ const ModalFirstRegisterClass = () => {
                         <div ref={nameRef} className={`${styles.label}`}>Class Name:</div>
                         <input onChange={(e) => {handleChange("name", e.target.value)}}/>
                     </div>
-                    <div className={`${styles.blockInput} ${redNotice.location && styles.redNotice}`}>
-                        <div ref={locationRef} className={`${styles.label}`}>Location:</div>
-                        <input onChange={(e) => {handleChange("location", e.target.value)}}/>
+                    <div className={styles.blockTickOnlineClass}>
+                    {onlineClass ?
+                        <svg onClick={() => {setOnlineClass(false); handleChange("location", "");}} xmlns="http://www.w3.org/2000/svg" fill="green" className={styles.toggleSwitch} viewBox="0 0 16 16">
+                            <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8"/>
+                        </svg> :
+                        <svg onClick={() => {setOnlineClass(true); handleChange("location", "online"); handleChange("linkOnline", "")}} xmlns="http://www.w3.org/2000/svg" fill="black" className={styles.toggleSwitch} viewBox="0 0 16 16">
+                            <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5"/>
+                        </svg>
+                    } <div>Online Class</div>
                     </div>
-                    <div className={styles.blockInput}>
-                        <div className={styles.label}>Map:</div>
-                        <input onChange={(e) => {handleChange("map", e.target.value)}}/>
-                        <div className={styles.mapInstructionsLabel}>We support directly integrating maps into personal information. <Link to={"/doc/map"}>Click here</Link> to view instructions!</div>
-                    </div>
+                    {!onlineClass ?
+                        <>
+                            <div className={`${styles.blockInput} ${redNotice.location && styles.redNotice}`}>
+                                <div ref={locationRef} className={`${styles.label}`}>Location:</div>
+                                <input onChange={(e) => {handleChange("location", e.target.value)}} value={newClass.location}/>
+                            </div>
+                            <div className={styles.blockInput}>
+                                <div className={styles.label}>Map:</div>
+                                <input onChange={(e) => {handleChange("map", e.target.value)}}/>
+                                <div className={styles.mapInstructionsLabel}>We support directly integrating maps into personal information. <Link to={"/doc/map"}>Click here</Link> to view instructions!</div>
+                            </div>
+                        </> :
+                        <>
+                            <div ref={linkOnlineRef} className={`${styles.blockInput} ${redNotice.linkOnline && styles.redNotice}`}>
+                                <div>This class is an online class, please enter the link for the class in the space below.</div>
+                                <input value={newClass.linkOnline} placeholder='Enter the class link here.' onChange={(e) => {handleChange("linkOnline", e.target.value)}}/>
+                            </div>
+                        </>
+                    }
                     <div className={styles.blockInput}>
                         <div className={styles.label}>Times:</div>
                         <div className={styles.timeBlock}>
@@ -722,70 +912,50 @@ const ModalFirstRegisterClass = () => {
                                                 <path fillRule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5m-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5"/>
                                             </svg>
                                         }
-                                        {i > 0 && 
+                                        {(i > 0 || choosenInMyStudents[i] === true) && 
                                             <svg className={styles.closeBtn} onClick={() => {handleClickDeleteAStudent(i)}} xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
                                                 <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                                             </svg>
                                         }
                                     </div>
-                                    <div className={styles.linkToModalChooseStudent} onClick={() => {handleClickChooseStudent(i)}}>Choose a student in "My Students"?</div>
-                                    <div className={`${styles.blockInput} ${redNotice.nameStudent[i] && styles.redNotice}`}>
+                                    {!choosenInMyStudents[i] ? 
+                                    <>  
+
+                                        <div className={styles.linkToModalChooseStudent} onClick={() => {handleClickChooseStudent(i)}}>Choose a student in "My Students"?</div>
+                                        <div className={`${styles.blockInput} ${redNotice.nameStudent[i] && styles.redNotice}`}>
                                         <div id={`studentName${i}`} className={styles.label}>Name</div>
-                                        <input placeholder={`Enter student's name`} onChange={(e) => {handleChangeStudent("name", {i: i, iv: e.target.value})}} />
-                                    </div>
-                                    {!showStudent[i] && 
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots" viewBox="0 0 16 16">
-                                            <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
-                                        </svg>
-                                    }
-                                    {showStudent[i] && 
-                                        <>
-                                            <div className={styles.blockInput}>
-                                        <div className={styles.label}>Age</div>
-                                        <input placeholder='Ex: 12, 20,..' type="number" value={studentArr[i].age} onChange={(e) => {handleChangeStudent("age", {i: i, iv: e.target.value})}} />
-                                    </div>
-                                    <div className={styles.blockInput}>
-                                        <div className={styles.label}>Email</div>
-                                        <input placeholder='Ex: studentABC@gmail.com' type="text" onChange={(e) => {handleChangeStudent("email", {i: i, iv: e.target.value})}} />
-                                    </div>
-                                    <div className={styles.blockInput}>
-                                        <div className={styles.label}>Sex</div>
-                                        <select className={styles.selectTag} onChange={(e) => {handleChangeStudent("sex", {i: i, iv: sexArr[e.target.selectedIndex]})}}>
-                                            {sexArr.map((v,_) => {
-                                                return(
-                                                    <option className={v}>{v}</option>
-                                                )
-                                            }) }
-                                        </select>
-                                    </div>
-                                    <div className={styles.blockInput}>
-                                        <div className={styles.label}>Phone</div>
-                                        <input placeholder='Ex: 034337xxxx' type="text" value={studentArr[i].phone} onChange={(e) => {handleChangeStudent("phone", {i: i, iv: e.target.value})}} />
-                                    </div>
-                                    <div className={styles.blockInput}>
-                                        <div className={styles.label}>Address</div>
-                                        <input placeholder='Ex: 123, Tan Lap, Dong Hoa, Di An, Binh Duong' type="text" onChange={(e) => {handleChangeStudent("address", {i: i, iv: e.target.value})}} />
-                                    </div>
-                                    
-                                    <div className={styles.blockParents}>
-                                        <div className={styles.title}>
-                                            Parents Information
+                                        <div className={styles.containerInput}>
+                                            <input placeholder={`Enter student's name`} value={studentArr[i].name} onFocus={() => handleStudentFocus(i)} onBlur={handleStudentBlur}  onChange={(e) => {handleChangeStudent("name", {i: i, iv: e.target.value})}} />
+                                            {(studentFocus === i) && (resultSearch.length > 0) ? 
+                                             <> 
+                                                <div className={`${styles.containerSearchResult} ${!showStudent[i] && styles.smallSize}`}>
+                                                    {resultSearch.map((v, i2) => {
+                                                        return(
+                                                            <div onClick={() => {handleClickFromSuggestBlock(i, v)}}>{v.key}</div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </> : null }
                                         </div>
-                                        <div className={styles.blockInput}>
-                                            <div className={styles.label}>Name</div>
-                                            <input placeholder={`Enter parents's name`} onChange={(e) => {handleChangeStudent("nameParents", {i: i, iv: e.target.value})}} />
                                         </div>
-                                        <div className={styles.blockInput}>
+                                        {!showStudent[i] && 
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots" viewBox="0 0 16 16">
+                                                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+                                            </svg>
+                                        }
+                                        {showStudent[i] && 
+                                            <>
+                                                <div className={styles.blockInput}>
                                             <div className={styles.label}>Age</div>
-                                            <input placeholder='Ex: 40, 30,..' type="number" value={studentArr[i].parents.age} onChange={(e) => {handleChangeStudent("ageParents", {i: i, iv: e.target.value})}} />
+                                            <input placeholder='Ex: 12, 20,..' type="number" value={studentArr[i].age} onChange={(e) => {handleChangeStudent("age", {i: i, iv: e.target.value})}} />
                                         </div>
                                         <div className={styles.blockInput}>
-                                        <div className={styles.label}>Email</div>
-                                        <input placeholder='Ex: studentABC@gmail.com' type="text" onChange={(e) => {handleChangeStudent("emailParents", {i: i, iv: e.target.value})}} />
-                                    </div>
+                                            <div className={styles.label}>Email</div>
+                                            <input placeholder='Ex: studentABC@gmail.com' type="text" onChange={(e) => {handleChangeStudent("email", {i: i, iv: e.target.value})}} />
+                                        </div>
                                         <div className={styles.blockInput}>
-                                        <div className={styles.label}>Sex</div>
-                                            <select className={styles.selectTag} onChange={(e) => {handleChangeStudent("sexParents", {i: i, iv: sexArr[e.target.selectedIndex]})}}>
+                                            <div className={styles.label}>Sex</div>
+                                            <select className={styles.selectTag} onChange={(e) => {handleChangeStudent("sex", {i: i, iv: sexArr[e.target.selectedIndex]})}}>
                                                 {sexArr.map((v,_) => {
                                                     return(
                                                         <option className={v}>{v}</option>
@@ -795,15 +965,139 @@ const ModalFirstRegisterClass = () => {
                                         </div>
                                         <div className={styles.blockInput}>
                                             <div className={styles.label}>Phone</div>
-                                            <input placeholder='Ex: 034337xxxx' type="text" value={studentArr[i].parents.phone} onChange={(e) => {handleChangeStudent("phoneParents", {i: i, iv: e.target.value})}} />
+                                            <input placeholder='Ex: 034337xxxx' type="text" value={studentArr[i].phone} onChange={(e) => {handleChangeStudent("phone", {i: i, iv: e.target.value})}} />
                                         </div>
                                         <div className={styles.blockInput}>
                                             <div className={styles.label}>Address</div>
-                                            <input placeholder='Ex: 123, Tan Lap, Dong Hoa, Di An, Binh Duong' type="text" onChange={(e) => {handleChangeStudent("addressParents", {i: i, iv: e.target.value})}} />
+                                            <input placeholder='Ex: 123, Tan Lap, Dong Hoa, Di An, Binh Duong' type="text" onChange={(e) => {handleChangeStudent("address", {i: i, iv: e.target.value})}} />
                                         </div>
-                                    </div>
-                                        </>
-                                    }
+                                        
+                                        <div className={styles.blockParents}>
+                                            <div className={styles.title}>
+                                                Parents Information
+                                            </div>
+                                            <div className={styles.blockInput}>
+                                                <div className={styles.label}>Name</div>
+                                                <input placeholder={`Enter parents's name`} onChange={(e) => {handleChangeStudent("nameParents", {i: i, iv: e.target.value})}} />
+                                            </div>
+                                            <div className={styles.blockInput}>
+                                                <div className={styles.label}>Age</div>
+                                                <input placeholder='Ex: 40, 30,..' type="number" value={studentArr[i].parents.age} onChange={(e) => {handleChangeStudent("ageParents", {i: i, iv: e.target.value})}} />
+                                            </div>
+                                            <div className={styles.blockInput}>
+                                            <div className={styles.label}>Email</div>
+                                            <input placeholder='Ex: studentABC@gmail.com' type="text" onChange={(e) => {handleChangeStudent("emailParents", {i: i, iv: e.target.value})}} />
+                                        </div>
+                                            <div className={styles.blockInput}>
+                                                <div className={styles.label}>Sex</div>
+                                                    <select className={styles.selectTag} onChange={(e) => {handleChangeStudent("sexParents", {i: i, iv: sexArr[e.target.selectedIndex]})}}>
+                                                        {sexArr.map((v,_) => {
+                                                            return(
+                                                                <option className={v}>{v}</option>
+                                                            )
+                                                        }) }
+                                                    </select>
+                                                </div>
+                                                <div className={styles.blockInput}>
+                                                    <div className={styles.label}>Phone</div>
+                                                    <input placeholder='Ex: 034337xxxx' type="text" value={studentArr[i].parents.phone} onChange={(e) => {handleChangeStudent("phoneParents", {i: i, iv: e.target.value})}} />
+                                                </div>
+                                                <div className={styles.blockInput}>
+                                                    <div className={styles.label}>Address</div>
+                                                    <input placeholder='Ex: 123, Tan Lap, Dong Hoa, Di An, Binh Duong' type="text" onChange={(e) => {handleChangeStudent("addressParents", {i: i, iv: e.target.value})}} />
+                                                </div>
+                                            </div>
+                                            </>
+                                        }
+                                    </> : 
+                                    <>  
+                                        {/* <div className={styles.linkToModalChooseStudent} onClick={() => {handleClickChooseStudent(i)}}>Choose another student in "My Students"?</div>
+                                        <div className={`${styles.blockInput} ${redNotice.nameStudent[i] && styles.redNotice}`}>
+                                        <div id={`studentName${i}`} className={styles.label}>Name</div>
+                                        <div className={styles.containerInput}>
+                                            <input disabled placeholder={`empty`} />
+                                            {(studentFocus === i) && (resultSearch) ? 
+                                             <> 
+                                                <div className={styles.containerSearchResult}>
+                                                    {resultSearch.map((v, i) => {
+                                                        return(
+                                                            <div>{v.key}</div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </> : null }
+                                        </div>
+                                        </div>
+                                        {!showStudent[i] && 
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots" viewBox="0 0 16 16">
+                                                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+                                            </svg>
+                                        }
+                                        {showStudent[i] && 
+                                            <>
+                                                <div className={styles.blockInput}>
+                                            <div className={styles.label}>Age</div>
+                                            <input disabled placeholder='empty' type="number"  />
+                                        </div>
+                                        <div className={styles.blockInput}>
+                                            <div className={styles.label}>Email</div>
+                                            <input disabled placeholder='empty' type="text"  />
+                                        </div>
+                                        <div className={styles.blockInput}>
+                                            <div className={styles.label}>Sex</div>
+                                            <select disabled className={styles.selectTag} >
+                                                
+                                                <option >---</option>
+                                                
+                                            </select>
+                                        </div>
+                                        <div className={styles.blockInput}>
+                                            <div className={styles.label}>Phone</div>
+                                            <input disabled placeholder='empty' type="text" />
+                                        </div>
+                                        <div className={styles.blockInput}>
+                                            <div className={styles.label}>Address</div>
+                                            <input disabled placeholder='empty' type="text" />
+                                        </div>
+                                        
+                                        <div className={styles.blockParents}>
+                                            <div className={styles.title}>
+                                                Parents Information
+                                            </div>
+                                            <div className={styles.blockInput}>
+                                                <div className={styles.label}>Name</div>
+                                                <input disabled placeholder={`empty`}  />
+                                            </div>
+                                            <div className={styles.blockInput}>
+                                                <div className={styles.label}>Age</div>
+                                                <input disabled placeholder='empty' type="number"  />
+                                            </div>
+                                            <div className={styles.blockInput}>
+                                            <div className={styles.label}>Email</div>
+                                            <input disabled placeholder='empty' type="text"/>
+                                        </div>
+                                            <div className={styles.blockInput}>
+                                                <div className={styles.label}>Sex</div>
+                                                    <select disabled className={styles.selectTag} >
+                                                        
+                                                                <option >---</option>
+                                                        
+                                                    </select>
+                                                </div>
+                                                <div className={styles.blockInput}>
+                                                    <div className={styles.label}>Phone</div>
+                                                    <input disabled placeholder='empty' />
+                                                </div>
+                                                <div className={styles.blockInput}>
+                                                    <div className={styles.label}>Address</div>
+                                                    <input disabled placeholder='empty' type="text"/>
+                                                </div>
+                                            </div>
+                                            </>
+                                        }  */}
+                                        {StudentFromMyStudents[i] !== null && <BlockStudentInfoPreview maximize={showStudent[i]} data={StudentFromMyStudents[i]} index={i}/>}
+                                    </>}
+                                    
                                 </div>
                             )
                         })}

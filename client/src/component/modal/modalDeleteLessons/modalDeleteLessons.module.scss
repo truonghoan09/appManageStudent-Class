@@ -1,0 +1,138 @@
+.containerElement{
+    height: 100%;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .scheduleBlock{
+        padding: 0.3rem ;
+        display: flex;
+        gap: 0.4rem;
+    }
+    
+    .numberOfSchedule1, .numberOfSchedule2, .numberOfSchedule3, .numberOfSchedule4, .numberOfSchedule5, .numberOfSchedule6, .numberOfSchedule7 {
+        .itemSchedule{
+            border: 5px double gray;
+            border-collapse: collapse;
+            padding: 0 0.3rem;
+            padding-bottom: 0.2rem;
+            position: relative;
+            .containerDeleteIcon{
+                height: 18px;
+                width: 18px;
+                position: absolute;
+                right: -0.6rem;
+                top: -0.6rem;
+                border-radius: 50%;
+                background-color: white;
+                display: flex;
+                justify-self: center;
+                align-items: center;
+                svg{
+                    cursor: pointer;
+                    height: 18px;
+                    color: rgb(243, 92, 92);
+                    &:hover{
+                        color: rgb(242, 131, 131);
+                    }
+                    &:active{
+                        color: rgb(242, 101, 101);
+                    }
+                }
+            }
+            .day, .time{
+                text-align: center;
+                padding: 0.3rem 0rem;
+                margin: 0rem 0.5rem;
+            }
+            .day{
+                border-bottom: 2px solid black;
+            }
+        }
+        .deleted {
+            .day{
+                border-bottom: 2px solid rgb(210, 209, 209);
+            }
+            border-color: rgb(255, 42, 42);
+            color: rgb(205, 194, 194);
+            .containerDeleteIcon{
+                border: solid 1px green;
+
+                svg{
+                    color: green;
+                    &:hover{
+                        color: rgb(13, 188, 13);
+                    }
+                    &:active{
+                        color: rgb(7, 160, 7);
+                    }
+                }
+
+            }
+        }
+    }
+    .numberOfSchedule1{
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+    .numberOfSchedule2{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    .numberOfSchedule3{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .numberOfSchedule4{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    .numberOfSchedule5{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    }
+    .numberOfSchedule6{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    }
+    .numberOfSchedule7{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    }
+
+    
+    .footer{
+        display: flex;
+        gap: 1rem;
+        width: 100%;
+        justify-content: center;
+        margin-top: 1rem;
+        .saveBtn{
+            background-color: rgb(2, 164, 2);
+            color: white;
+            padding: 0.2rem 1rem;
+            cursor: pointer;
+            &:hover{
+                background-color: rgb(17, 195, 17);
+            }
+            &:active{
+                background-color: rgb(25, 156, 25);
+            }
+        }
+        .exitBtn{
+            padding: 0.2rem 1rem;
+            background-color: rgb(250, 66, 66);
+            color: white;
+            cursor: pointer;
+            &:hover{
+                background-color: rgb(250, 80, 80);
+            }
+            &:active{
+                background-color: rgb(220, 51, 51);
+            }
+        }
+    }
+    
+}

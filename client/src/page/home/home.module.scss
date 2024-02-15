@@ -1,4 +1,9 @@
 .container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    flex-direction: column;
     .header{
         width: 100%;
         position: fixed;
@@ -23,8 +28,170 @@
     .headerPlaceholder{
         height: 4rem;
     }
+    .classNameBlock{
+        display: flex;
+        gap: 0.3rem;
+        font-size: 2rem;
+    }
+    .scheduleContainer{
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        .label{
+            font-size: large;
+        }
+        .scheduleBlock{
+            padding: 0.3rem ;
+            display: flex;
+            gap: 0.3rem;
+        }
+        .numberOfSchedule1, .numberOfSchedule2, .numberOfSchedule3, .numberOfSchedule4, .numberOfSchedule5, .numberOfSchedule6, .numberOfSchedule7, .numberOfSchedule8, .numberOfSchedule9, .numberOfSchedule10, .numberOfSchedule11, .numberOfSchedule12, .numberOfSchedule13, .numberOfSchedule14,
+        .numberOfSchedule15{
+            .itemSchedule{
+                border: 5px double gray;
+                border-collapse: collapse;
+                padding: 0 0.3rem;
+                padding-bottom: 0.2rem;
+                .day, .time{
+                    text-align: center;
+                    padding: 0.3rem 0rem;
+                    margin: 0rem 0.5rem;
+                }
+                .day{
+                    border-bottom: 2px solid black;
+                }
+            }
+        }
+        .numberOfSchedule1{
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+        .numberOfSchedule2{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        .numberOfSchedule3{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+        .numberOfSchedule4{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+        .numberOfSchedule5{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        }
+        .numberOfSchedule6{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+        }
+        
+
+        .blockNote{
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            align-items: center;
+            svg{
+                height: 18px;
+                cursor: pointer;
+                &:hover{
+                    color: gray;
+                }
+                &:active{
+                    color: black;
+                }
+            }
+            div{
+                display: flex;
+                gap: 0.4rem;
+                justify-content: center;
+                align-items: center;
+                textarea{
+                    padding: 0.3rem 0.5rem;
+                    font-size: 17px;
+                    min-height: 3rem;
+                    min-width: 25vw;
+                }
+            }
+            .cancelBtn, .saveBtn{
+                width: fit-content;
+                height: fit-content;
+                padding: 0.4rem 1rem;
+                border: solid 1px red;
+                background-color: red;
+                color: white;
+                border-radius: 4px;
+                user-select: none;
+                cursor: pointer;      
+                &:hover{
+                    box-shadow: 0px 0px 10px rgb(158, 156, 156);
+                }          
+                &:active{
+                    border: solid 1px red;
+                    background-color: rgb(255, 59, 59);
+                }
+            }
+            .saveBtn{
+                border: solid 1px rgb(50, 207, 55);
+                background-color: rgb(50, 207, 55);
+                &:active{
+                    border: solid 1px rgb(50, 207, 55);
+                    background-color: rgb(86, 215, 90);
+                }
+
+            }
+        }
+        .addNextLessons{
+            border: 1px solid gray;
+            padding: 0.2rem 0.5rem;
+            width: fit-content;
+            cursor: pointer;
+            margin-top: 0.3rem;
+            border-radius: 3px;
+            user-select: none;
+            &:hover{
+                color: rgb(50, 50, 253);
+                border-color: rgb(50, 50, 253);
+            }
+            &:active {
+                color: rgba(91, 91, 252, 0.723);
+                border-color: rgba(91, 91, 252, 0.723);
+            }
+        }
+        .removeALessons{
+            border: 1px solid gray;
+            padding: 0.2rem 0.5rem;
+            width: fit-content;
+            cursor: pointer;
+            margin-top: 0.3rem;
+            border-radius: 3px;
+            user-select: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            svg{
+                height: 16px;
+            }
+            .checkIcon{
+                color: rgb(46, 228, 46);
+            }
+            &:hover{
+                color: rgb(253, 101, 50);
+                border-color: rgb(253, 101, 50);
+            }
+            &:active {
+                color: rgba(253, 101, 50, 0.601);
+                border-color: rgba(253, 101, 50, 0.601);
+            }
+        }
+    }
     .taskContainer{
-        padding: 2rem 0;
+        padding: 0.5rem 0;
         width: 100vw;
         display: flex;
         flex-direction: column;
@@ -33,19 +200,44 @@
             font-size: large;
             padding: 1rem 0;
         }
-        .taskBlock{
+        .homeworkBlock{
             width: 40vw;
-            border-bottom: 1px solid gray;
-            .task{
-                border: 1px solid gray;
-                border-bottom: none;
-                padding: 0.5rem 1rem;
-                cursor: pointer;
+            border: 1px solid gray;
+            padding: 0.5rem 1rem;
+            .taskItemBlock{
+                display: flex;
+                gap: 0.4rem;
+                padding: 0.3rem 1rem;
+                &:hover {
+                    background-color: rgba(128, 128, 128, 0.211);
+                }
             }
-            .task:hover {
-                background-color: rgba(128, 128, 128, 0.211);
+            
+        
+            .blockBtn{
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                .addHomeWorkBtn{
+                    border: 1px solid gray;
+                    padding: 0.2rem 0.5rem;
+                    width: fit-content;
+                    cursor: pointer;
+                    margin-top: 0.3rem;
+                    border-radius: 3px;
+                    user-select: none;
+                    &:hover{
+                        color: rgb(50, 50, 253);
+                        border-color: rgb(50, 50, 253);
+                    }
+                    &:active {
+                        color: rgba(91, 91, 252, 0.723);
+                        border-color: rgba(91, 91, 252, 0.723);
+                    }
+                }
             }
         }
+
     }
 }
 

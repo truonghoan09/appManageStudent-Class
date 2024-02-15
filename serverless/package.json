@@ -1,0 +1,12 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "serverless Netlify",
+  "main": "server.index",
+  "author": "LTH",
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^10.7.2",
+    "netlify":  "^13.1.13"
+  }
+}

@@ -7,10 +7,17 @@ import Home from "../../page/home"
 import checkSignin from "../../module/checkSignin"
 import SignIn from "../../module/signIn"
 import MapInstructions from "../../page/mapInstructions"
+import { useDispatch } from "react-redux"
+import { getAllStudentsName, updateScheduleNextLessonsFollowTodayAction } from "../../redux/action"
 
 
 const AppRouters = () => {
-    checkSignin();
+    const dispatch = useDispatch();
+    const fetchData = async ( ) => {
+        await checkSignin();
+        await dispatch(getAllStudentsName());
+    }
+    fetchData();
     const element = useRoutes([
         {
             path: PATH.HOME,

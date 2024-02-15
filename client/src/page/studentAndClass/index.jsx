@@ -1,6 +1,6 @@
 import styles from "./student.module.scss";
 import {useDispatch, useSelector} from 'react-redux';
-import { onFirstRegisterClass, setClassnow } from "../../redux/action";
+import { getUserData, onFirstRegisterClass, setClassnow } from "../../redux/action";
 import GoogleButton from 'react-google-button'
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleAuthProvider, db } from "../../firebase";
@@ -12,20 +12,39 @@ import { getCookie, setCookie } from "../../module/cookieTask";
 import ModalTemplate from "../../component/modal/modalTemplate";
 import ModalEnterFee from "../../component/modal/modalFirstRegisterClass";
 import ModalFirstRegisterClass from "../../component/modal/modalFirstRegisterClass";
+import getAllClassesFrom from "../../module/getAllClassesFrom";
+import getStudentsFrom from "../../module/getStudentsFrom";
 
 
 const StudentAndClass = () => {
+    const dispatch = useDispatch()
     const isSignin = useSelector(state => state.isSigninReducer.isSignin)
-    const [data, setData] = useState('');
+    const [dataClass, setDataClass] = useState([])
+    const [dataStudents, setDataStudents] = useState([])
     useEffect(() => {
-        get(child(ref(db), `users/` +  localStorage.getItem('uid'))).then((result) => {
-            setData(result.val());
-        }).catch((err) => {
-            console.log(err)
-        });
+        dispatch(getUserData(localStorage.getItem("uid")));
     }, [])
 
-    const dispatch = useDispatch()
+    const dataState = useSelector(state => state.getUserDataReducer.data);
+
+
+    useEffect(() => {
+        if(dataState && dataState.errCode === 0) {
+            const fetchData = async () => {
+                try {
+                  const resultClasses = await getAllClassesFrom(dataState.data);
+                  setDataClass(resultClasses); // Đây là giá trị của finalData
+                  const resultStudents = await getStudentsFrom(dataState.data);
+                  setDataStudents(resultStudents); // Đây là giá trị của finalData
+                } catch (error) {
+                  console.error(error);
+                }
+            };
+            fetchData();
+        }
+        
+    }, [dataState])
+
     
     const  goHome = ()  => {
         window.location.pathname = "/";
@@ -44,9 +63,9 @@ const StudentAndClass = () => {
         }
     }, [isSignin])
 
-    const ChangeStudent = async (key) => {
-        await dispatch(setClassnow(key));
-        await localStorage.setItem('classChoosen', key);
+    const ChangeClass = async (id) => {
+        await dispatch(setClassnow(id));
+        await localStorage.setItem('classChoosen', id);
         await goHome();
     }
 
@@ -63,29 +82,16 @@ const StudentAndClass = () => {
         setShowMenuSubHeaderShort(!showMenuSubHeaderShort);
     }
 
-    const a = {   
-        fee: "200",
-        scheldule: [{day: "Monday", time: "7pm", out : "8pm"}, {day: "Thursday", time: "7pm", out:  "8pm"}],
-        location: "Lưu vào đây 1 cái map",
-        rollCall: ["day", "day", "day"], /* (Này là mảng lưu lại các ngày có lớp diễn ra từ thời điểm bấm bắt đầu đến thời điểm bấm kết sổ)*/
-        students: ["Danh sách các học sinh trong lớp này", "hs2"],
-        dayOff: [[], ["day"]], /*Mảng của các mảng điểm danh ngày off của học viên]} (này sẽ có dữ liệu nếu đây là lớp nhóm */
-        homeWork: ["task 1", "task 2"],
-        historyRollCall: [[], [], [], [], [], [], [], [], [], []] /*[mảng gồm 10 phần tử] => Các phần tử là các mảng roll day cũ, lưu tối đa 10 lần */
-    }
-
-    const initClassObj = {
-        name: "",
-        fee : "",
-        schedule: [],
-        location: "",
-        map: "",
-        rollCall: [],
-        students: [],
-        dayOff: [],
-        homeWork: [],
-        historyRollCall: [],
-    }
+    // const a = {   
+    //     fee: "200",
+    //     scheldule: [{day: "Monday", time: "7pm", out : "8pm"}, {day: "Thursday", time: "7pm", out:  "8pm"}],
+    //     location: "Lưu vào đây 1 cái map",
+    //     rollCall: ["day", "day", "day"], /* (Này là mảng lưu lại các ngày có lớp diễn ra từ thời điểm bấm bắt đầu đến thời điểm bấm kết sổ)*/
+    //     students: ["Danh sách các học sinh trong lớp này", "hs2"],
+    //     dayOff: [[], ["day"]], /*Mảng của các mảng điểm danh ngày off của học viên]} (này sẽ có dữ liệu nếu đây là lớp nhóm */
+    //     homeWork: ["task 1", "task 2"],
+    //     historyRollCall: [[], [], [], [], [], [], [], [], [], []] /*[mảng gồm 10 phần tử] => Các phần tử là các mảng roll day cũ, lưu tối đa 10 lần */
+    // }
 
     const onRegisterClass = useSelector(state => state.onFirstRegisterClassModalReducer.onModal);
 
@@ -140,13 +146,13 @@ const StudentAndClass = () => {
                             <div className={styles.outletBlock}>
                                 {subHeadChoosen === 0 ?
                                     <>
-                                        {data.myClasses ? 
+                                        {dataClass ? 
                                             <>
                                                 <div className={styles.studentBlock}>
-                                                    {data.myClasses && Object.keys(data.myClasses).map((key)=> {
+                                                    {dataClass && dataClass.map((v, i)=> {
                                                         return(
-                                                            <div className={styles.classItem} onClick={() => ChangeStudent(key)}>
-                                                                {key}
+                                                            <div className={styles.classItem} onClick={() => ChangeClass(v.data.id)}>
+                                                                {v.key}
                                                             </div>
                                                         )
                                                     })}
@@ -169,13 +175,13 @@ const StudentAndClass = () => {
                                     {
                                         subHeadChoosen === 1 ?
                                         <>
-                                            {data.myStudents ? 
+                                            {dataStudents ? 
                                                 <>
                                                     <div className={styles.studentBlock}>
-                                                        {data.myStudents && Object.keys(data.myStudents).map((key)=> {
+                                                        {dataStudents && dataStudents.map((v, i)=> {
                                                             return(
-                                                                <div className={styles.classItem} onClick={() => ChangeStudent(key)}>
-                                                                    {key}
+                                                                <div className={styles.classItem} onClick={() => ChangeClass(key)}>
+                                                                    {v.key}
                                                                 </div>
                                                             )
                                                         })}
@@ -188,12 +194,12 @@ const StudentAndClass = () => {
                                             }
                                         </> : 
                                         <>
-                                            {data.myEnrolledClasses ? 
+                                            {dataClass.myEnrolledClasses ? 
                                                 <>
                                                     <div className={styles.studentBlock}>
-                                                        {data.myEnrolledClasses && Object.keys(data.myEnrolledClasses).map((key)=> {
+                                                        {dataClass.myEnrolledClasses && Object.keys(dataClass.myEnrolledClasses).map((key)=> {
                                                             return(
-                                                                <div className={styles.classItem} onClick={() => ChangeStudent(key)}>
+                                                                <div className={styles.classItem} onClick={() => ChangeClass(key)}>
                                                                     {key}
                                                                 </div>
                                                             )

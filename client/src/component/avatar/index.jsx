@@ -51,6 +51,8 @@ const Avatar = (props) => {
     const handleClickLogout = async () => {
         await localStorage.removeItem('token');
         await localStorage.removeItem('uid');
+        await localStorage.removeItem('classChoosen');
+        await localStorage.removeItem('listProfile')
         await localStorage.removeItem('firebase:host:managestudent-class-default-rtdb.firebaseio.com');
         setShowAvaMenu(false);
         location.reload();
