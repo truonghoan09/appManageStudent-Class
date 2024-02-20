@@ -1,3 +1,5 @@
+import loadingGif from "../assets/loading.gif"
+
 const PATH = {
     HOME: '/',
     ALL_CLASSES_AND_STUDENTS: '/classes-and-students',
@@ -9,3 +11,8 @@ const PATH = {
 }
 
 export default PATH
+
+
+export const IMAGE = {
+    loadingGif : loadingGif
+}

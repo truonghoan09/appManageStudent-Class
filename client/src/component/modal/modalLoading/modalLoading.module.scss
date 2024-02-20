@@ -42,14 +42,10 @@
                     }
                 }
             }
-            .day, .time, .date{
+            .day, .time{
                 text-align: center;
                 padding: 0.3rem 0rem;
                 margin: 0rem 0.5rem;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
             }
             .day{
                 border-bottom: 2px solid black;

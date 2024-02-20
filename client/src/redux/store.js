@@ -20,6 +20,10 @@ import onModalUpdateNextLessonsReducer from "./reducer/onModalUpdateNextLessonsR
 import updateScheduleNextLessonsReducer from "./reducer/updateScheduleNextLessonsReducer"
 import onModalNoticeReducer from "./reducer/onModalNoticeReducer"
 import onModalDeleteLessonsReducer from "./reducer/onModalDeleteLessonsReducer"
+import toggleFixedScheduleReducer from "./reducer/toggleFixedScheduleReducer"
+import deleteScheduleNextLessonsReducer from "./reducer/deleteScheduleNextLessonsReducer"
+import onModalConfirmDeletionReducer from "./reducer/onModalConfirmDeletionReducer"
+import updateClassesAfterDeletionReducer from "./reducer/updateClassesAfterDeletionReducer"
 
 
 const rootReducer = combineReducers({
@@ -43,6 +47,10 @@ const rootReducer = combineReducers({
     updateScheduleNextLessonsReducer,
     onModalNoticeReducer,
     onModalDeleteLessonsReducer,
+    toggleFixedScheduleReducer,
+    deleteScheduleNextLessonsReducer,
+    onModalConfirmDeletionReducer,
+    updateClassesAfterDeletionReducer,
 })
 
 const store = createStore(rootReducer, applyMiddleware(thunk));

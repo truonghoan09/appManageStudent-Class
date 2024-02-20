@@ -1,12 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './modalFirstRegister.module.scss'
-import { addClassAction, addStudentsAction, onFirstRegisterClass, onModalChooseAStudentInMyStudents, onModalSameTravelTimeAction, reRenderSameTravelTimeAction, setStudentFromMyStudent, sharedTravelTimeAction } from '../../../redux/action';
+import { addClassAction, addStudentsAction, onFirstRegisterClass, onModalChooseAStudentInMyStudents, onModalNoticeAction, onModalSameTravelTimeAction, reRenderSameTravelTimeAction, setStudentFromMyStudent, sharedTravelTimeAction } from '../../../redux/action';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ModalTemplate from '../modalTemplate';
 import ModalSetSameTravelTime from '../modalSetSameTravelTime';
 import BlockStudentInfoPreview from '../../blockStudentInfoPreview';
 import ModalChooseAStudentFromMyStudents from '../modalChooseAStudentFromMyStudent';
+import ModalTemplateNotice from '../modalTemplateNotice';
 
 const ModalFirstRegisterClass = () => {
     const dispatch = useDispatch();
@@ -16,20 +17,16 @@ const ModalFirstRegisterClass = () => {
     const locationRef = useRef(null)
     const linkOnlineRef = useRef(null)
 
+    const [notice, setNotice] = useState("");
+
     const [onlineClass, setOnlineClass] = useState(false)
 
-
-
-    const [fixedSchedule, setFixedSchedule] = useState(true);
 
     const initDaysChoosenItem = {day: "Monday", times: "00:00", duration: 1, travelTime: "00:00"}
 
 
     const [daysChoosen, setDaysChoosen] = useState([{day: "Monday", times: "00:00", duration: 1, travelTime: "00:00"}]);
 
-    useEffect(() => {
-        console.log(daysChoosen);
-    }, [daysChoosen])
 
     const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const timesInDay = [
@@ -88,7 +85,7 @@ const ModalFirstRegisterClass = () => {
         id: "",
         name: "",
         fee : "",
-        schedule: [initDaysChoosenItem],
+        schedule: {fixed: true, enRoute: false, fixedSchedule: [initDaysChoosenItem], note: "", nextLessons: ""},
         location: "",
         map: "",
         linkOnline: "",
@@ -156,7 +153,6 @@ const ModalFirstRegisterClass = () => {
                     const dataNeedSet = takeValue(key, iv);
                     switch (key) {
                         case "day":
-                            console.log('change, ',index);
                             newArr2[index].day = dataNeedSet;
                             break;
                         case "times":
@@ -220,6 +216,13 @@ const ModalFirstRegisterClass = () => {
                 case "duration": 
                     workInChangeTimesProp(data.i, data.iv, key)
                     break;
+                
+                case "fixed":
+                    initClass.schedule.fixed = data
+                    break;
+                case "scheduleNote":
+                    initClass.schedule.note = data
+                    break;
 
 
                 case "name": 
@@ -247,19 +250,11 @@ const ModalFirstRegisterClass = () => {
 
     useEffect(() => {
         let initNewClass = {...newClass};
-        if(!fixedSchedule) {
-            setRenderFromOther(true);
-            initNewClass.schedule = {note: otherNote};
+        if(!newClass.schedule.fixed) {
+            initNewClass.schedule.note = otherNote;
             setNewClass(initNewClass);
-        } else {
-            if(renderFromOther) {
-                setDaysChoosen([initDaysChoosenItem]);
-                initNewClass.schedule = [...daysChoosen];
-                setNewClass(initNewClass);
-                setRenderFromOther(false);
-            }
-        }
-    },  [fixedSchedule, otherNote])
+        } 
+    },  [newClass.schedule.fixed])
 
     
     const onModalSameTravelTime = useSelector(state => state.onModalSameTravelTimeReducer.onModal);
@@ -567,8 +562,8 @@ const ModalFirstRegisterClass = () => {
             if(localStorage.getItem("uid")) {
                 fetchData();
             } else {
-                console.log('Please Log in Frist!');
-
+                dispatch(onModalNoticeAction(true));
+                setNotice('Please Log in Frist!')
             }
         }
     }
@@ -669,12 +664,13 @@ const ModalFirstRegisterClass = () => {
         }
     }, [StudentFromMyStudentState]);
 
-    useEffect(() => {
-        console.log(newClass);
-    }, [newClass])
+    const onModalNoticeState = useSelector(state => state.onModalNoticeReducer.onModal);
+
+
 
     return(
         <>
+            {onModalNoticeState && <ModalTemplateNotice closeFunc={() => {dispatch(onModalNoticeAction(false))}} message={notice}/>}
             {onModalSameTravelTime && <ModalTemplate element={<ModalSetSameTravelTime/>}/>}
             {onModalChooseAStudentInMyStudentState && <ModalTemplate element={<ModalChooseAStudentFromMyStudents/>}/>}
             <div className={styles.containerBox}>
@@ -726,11 +722,11 @@ const ModalFirstRegisterClass = () => {
                                 <div className={styles.leftSide}>
                                     <div className={styles.blockToggleSwitch}>
                                         <div className={styles.containerToggleicon}>
-                                            { fixedSchedule ?
-                                                <svg onClick={() => {setFixedSchedule(false)}} xmlns="http://www.w3.org/2000/svg" fill="green" className={styles.toggleSwitch} viewBox="0 0 16 16">
+                                            { newClass.schedule.fixed ?
+                                                <svg onClick={() => {handleChange("fixed", false)}} xmlns="http://www.w3.org/2000/svg" fill="green" className={styles.toggleSwitch} viewBox="0 0 16 16">
                                                     <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8"/>
                                                 </svg> :
-                                                <svg onClick={() => {setFixedSchedule(true)}} xmlns="http://www.w3.org/2000/svg" fill="black" className={styles.toggleSwitch} viewBox="0 0 16 16">
+                                                <svg onClick={() => {handleChange("fixed", true)}} xmlns="http://www.w3.org/2000/svg" fill="black" className={styles.toggleSwitch} viewBox="0 0 16 16">
                                                     <path d="M11 4a4 4 0 0 1 0 8H8a5 5 0 0 0 2-4 5 5 0 0 0-2-4zm-6 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8M0 8a5 5 0 0 0 5 5h6a5 5 0 0 0 0-10H5a5 5 0 0 0-5 5"/>
                                                 </svg>
                                             }
@@ -740,7 +736,7 @@ const ModalFirstRegisterClass = () => {
                                         </div>
                                     </div>
                                 </div>
-                                {fixedSchedule && 
+                                {newClass.schedule.fixed && 
                                     <div className={styles.rightSide}>
                                         <div className={styles.linkToModal}>
                                             <div onClick={() => {dispatch(onModalSameTravelTimeAction(true))}} className={styles.lableToggle}>
@@ -749,7 +745,7 @@ const ModalFirstRegisterClass = () => {
                                         </div>
                                     </div>}
                             </div>
-                            {(fixedSchedule && !renderFromOther) ? 
+                            {(newClass.schedule.fixed) ? 
                             <>
                                 <div className={styles.BlockDaysPerWeek}>
                                     <div className={styles.label}>Days Per Week:</div>
@@ -761,7 +757,7 @@ const ModalFirstRegisterClass = () => {
                                             })}
                                     </select>
                                 </div>{
-                                    (fixedSchedule && !renderFromOther) &&
+                                    (newClass.schedule.fixed) &&
                                     <>
                                         {daysChoosen.map((_, i) => {
                                             return(
@@ -852,7 +848,7 @@ const ModalFirstRegisterClass = () => {
                             <>
                                 <div className={styles.blockOther}>
                                     <div className={styles.label}>Other:</div>
-                                    <textarea className={styles.textInput} onChange={(e) => {setOtherNote(e.target.value)}} defaultValue={"Học mỗi tuần 2 buổi, báo lịch tuần sau vào ngày thứ 7 hàng tuần"}></textarea>
+                                    <textarea className={styles.textInput} onChange={(e) => {handleChange("scheduleNote" ,e.target.value)}} defaultValue={"Học mỗi tuần 2 buổi, báo lịch tuần sau vào ngày thứ 7 hàng tuần"}></textarea>
                                 </div>
                             </>}
                         </div>

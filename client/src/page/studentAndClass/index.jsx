@@ -1,6 +1,6 @@
 import styles from "./student.module.scss";
 import {useDispatch, useSelector} from 'react-redux';
-import { getUserData, onFirstRegisterClass, setClassnow } from "../../redux/action";
+import { getUserData, onFirstRegisterClass, onModalConfirmDeletion, setClassnow, updateClassesAfterDeletion } from "../../redux/action";
 import GoogleButton from 'react-google-button'
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleAuthProvider, db } from "../../firebase";
@@ -14,12 +14,14 @@ import ModalEnterFee from "../../component/modal/modalFirstRegisterClass";
 import ModalFirstRegisterClass from "../../component/modal/modalFirstRegisterClass";
 import getAllClassesFrom from "../../module/getAllClassesFrom";
 import getStudentsFrom from "../../module/getStudentsFrom";
+import ModalConfirmDelete from "../../component/modal/modalTemplateConfirmDelete";
 
 
 const StudentAndClass = () => {
     const dispatch = useDispatch()
     const isSignin = useSelector(state => state.isSigninReducer.isSignin)
     const [dataClass, setDataClass] = useState([])
+    const [deleteOptionClass, setDeleteOptionClass] = useState([]); 
     const [dataStudents, setDataStudents] = useState([])
     useEffect(() => {
         dispatch(getUserData(localStorage.getItem("uid")));
@@ -33,6 +35,11 @@ const StudentAndClass = () => {
             const fetchData = async () => {
                 try {
                   const resultClasses = await getAllClassesFrom(dataState.data);
+                  let cloneDeleteOptioneClass;  
+                  if(resultClasses) {
+                    cloneDeleteOptioneClass = await [...Array(resultClasses.length).fill(false)];  
+                    setDeleteOptionClass(cloneDeleteOptioneClass);
+                  }
                   setDataClass(resultClasses); // Đây là giá trị của finalData
                   const resultStudents = await getStudentsFrom(dataState.data);
                   setDataStudents(resultStudents); // Đây là giá trị của finalData
@@ -81,18 +88,6 @@ const StudentAndClass = () => {
     const handleClickSubHeadershort = () => {
         setShowMenuSubHeaderShort(!showMenuSubHeaderShort);
     }
-
-    // const a = {   
-    //     fee: "200",
-    //     scheldule: [{day: "Monday", time: "7pm", out : "8pm"}, {day: "Thursday", time: "7pm", out:  "8pm"}],
-    //     location: "Lưu vào đây 1 cái map",
-    //     rollCall: ["day", "day", "day"], /* (Này là mảng lưu lại các ngày có lớp diễn ra từ thời điểm bấm bắt đầu đến thời điểm bấm kết sổ)*/
-    //     students: ["Danh sách các học sinh trong lớp này", "hs2"],
-    //     dayOff: [[], ["day"]], /*Mảng của các mảng điểm danh ngày off của học viên]} (này sẽ có dữ liệu nếu đây là lớp nhóm */
-    //     homeWork: ["task 1", "task 2"],
-    //     historyRollCall: [[], [], [], [], [], [], [], [], [], []] /*[mảng gồm 10 phần tử] => Các phần tử là các mảng roll day cũ, lưu tối đa 10 lần */
-    // }
-
     const onRegisterClass = useSelector(state => state.onFirstRegisterClassModalReducer.onModal);
 
     const handleClickAddClass = async() => {
@@ -106,9 +101,40 @@ const StudentAndClass = () => {
         await dispatch(onFirstRegisterClass(true));
     }
 
+    const handleDeleteClass = async (index) => {
+        let cloneDeleteOptioneClass = [...deleteOptionClass];
+        cloneDeleteOptioneClass[index] = true;
+        await setDeleteOptionClass(cloneDeleteOptioneClass);
+        await dispatch(onModalConfirmDeletion(true))
+    }
+    
+    const closeFuncConfirmDeletion = async () => {
+        let cloneDeleteOptioneClass = [...deleteOptionClass];
+        await cloneDeleteOptioneClass.fill(false);
+        await setDeleteOptionClass(cloneDeleteOptioneClass);
+        await dispatch(onModalConfirmDeletion(false));
+
+    }
+
+    const onModalConfirmDeletionState = useSelector(state => state.onModalConfirmDeletionReducer.onModal);
+
+    const deleteFunc = async() => {
+        let newClassObj = {};
+        deleteOptionClass.map((v, i) => {
+            if(!v) {
+                newClassObj = {...newClassObj, [dataClass[i].data.id]: dataClass[i].data}
+            }
+        })
+        await dispatch(updateClassesAfterDeletion(newClassObj))
+        await dispatch(getUserData(localStorage.getItem("uid")));
+        await dispatch(onModalConfirmDeletion(false));
+    }
+
+
     return(
         <>  
             {onRegisterClass && <ModalTemplate element ={<ModalFirstRegisterClass/>}/>}
+            {onModalConfirmDeletionState && <ModalConfirmDelete deleteFunc={() => deleteFunc()} closeFunc={() => closeFuncConfirmDeletion()} deleteItem={deleteOptionClass.indexOf(true) !== -1 && dataClass[deleteOptionClass.indexOf(true)].key}/>}
             <div className={styles.container}>
                 {isSignin &&
                     <>
@@ -151,8 +177,12 @@ const StudentAndClass = () => {
                                                 <div className={styles.studentBlock}>
                                                     {dataClass && dataClass.map((v, i)=> {
                                                         return(
-                                                            <div className={styles.classItem} onClick={() => ChangeClass(v.data.id)}>
+                                                            <div className={styles.classItem} >
                                                                 {v.key}
+                                                                <div className={styles.btnBlock}>
+                                                                    <div className={styles.viewBtn} onClick={() => ChangeClass(v.data.id)}>View</div>
+                                                                    <div className={styles.deleteBtn} onClick={() => {handleDeleteClass(i)}}>Delete</div>
+                                                                </div>
                                                             </div>
                                                         )
                                                     })}
@@ -180,8 +210,12 @@ const StudentAndClass = () => {
                                                     <div className={styles.studentBlock}>
                                                         {dataStudents && dataStudents.map((v, i)=> {
                                                             return(
-                                                                <div className={styles.classItem} onClick={() => ChangeClass(key)}>
+                                                                <div className={styles.classItem} >
                                                                     {v.key}
+                                                                    <div className={styles.btnBlock}>
+                                                                        <div className={styles.viewBtn} onClick={() => ChangeClass(key)}>View</div>
+                                                                        <div className={styles.deleteBtn}>Delete</div>
+                                                                    </div>
                                                                 </div>
                                                             )
                                                         })}
@@ -199,8 +233,12 @@ const StudentAndClass = () => {
                                                     <div className={styles.studentBlock}>
                                                         {dataClass.myEnrolledClasses && Object.keys(dataClass.myEnrolledClasses).map((key)=> {
                                                             return(
-                                                                <div className={styles.classItem} onClick={() => ChangeClass(key)}>
+                                                                <div className={styles.classItem}>
                                                                     {key}
+                                                                    <div className={styles.btnBlock}>
+                                                                        <div className={styles.viewBtn}>View</div>
+                                                                        <div className={styles.deleteBtn}>Delete</div>
+                                                                    </div>
                                                                 </div>
                                                             )
                                                         })}

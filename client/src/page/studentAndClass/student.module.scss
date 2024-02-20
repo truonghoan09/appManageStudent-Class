@@ -74,9 +74,35 @@
                     border: 1px solid gray;
                     border-bottom: none;
                     padding: 0.5rem 1rem;
+                    display: flex;
+                    align-items: center;
+                    position: relative;
+                    .btnBlock{
+                        position: absolute;
+                        right: 1.3rem;
+                        display: flex;
+                        gap: 0.3rem;
+                        .deleteBtn,.viewBtn{
+                            background-color: rgb(244, 82, 82);
+                            padding: 0.2rem 0.5rem;
+                            color: white;
+                            border-radius: 3px;
+                        }
+                        .viewBtn{
+                            background-color: rgb(55, 99, 243);
+                        }
+                    }
                 }
                 .classItem:hover{
-                    background-color: rgba(128, 128, 128, 0.211);
+                    .btnBlock{
+                        .deleteBtn:hover{
+                            background-color: rgb(255, 111, 89);
+                        }
+                        .viewBtn:hover{
+                            background-color: rgb(84, 123, 251);
+                        }
+                    }
+                    background-color: rgba(230, 249, 107, 0.445);
                 }
             }
             .notice{

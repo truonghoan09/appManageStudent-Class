@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./modalDeleteLessons.module.scss";
-import { getUserData, onModalDeleteLessonsAction, onModalNoticeAction, onModalSameTravelTimeAction, onModalUpdateNextLessonsAction, reRenderSameTravelTimeAction, updateScheduleNextLessonsAction } from "../../../redux/action";
+import { deleteScheduleNextLessonsAction, getUserData, onModalDeleteLessonsAction, onModalNoticeAction, onModalSameTravelTimeAction, onModalUpdateNextLessonsAction, reRenderSameTravelTimeAction, updateScheduleNextLessonsAction } from "../../../redux/action";
 import { useDispatch, useSelector } from "react-redux";
 import DateTimePicker from 'react-datetime-picker';
 import 'react-datetime-picker/dist/DateTimePicker.css';
@@ -9,6 +9,7 @@ import 'react-clock/dist/Clock.css';
 import ModalTemplate from "../modalTemplate";
 import ModalSetSameTravelTime from "../modalSetSameTravelTime";
 import ModalTemplateNotice from "../modalTemplateNotice";
+import ModalLoading from "../modalLoading";
 
 
 const ModalDeleteLessons = () => {
@@ -64,16 +65,21 @@ const ModalDeleteLessons = () => {
     const dataState = useSelector(state => state.getUserDataReducer.data.data);
 
     const [preSchedule, setPreSchedule] = useState([]);
-    const [copyPreSchedule, setCopyPreSchedule] = useState([]);
+    const [deleteOption, setDeleteOption] = useState([])
 
     useEffect(() => {
         let clonePreSchedule = [...dataState.myClasses[localStorage.getItem('classChoosen')].schedule.nextLessons];
+        let cloneDeleteOption = [...deleteOption];
+        for (let i = 1; i<= clonePreSchedule.length - cloneDeleteOption.length; i++) {
+            cloneDeleteOption.push(false);
+        }
         setPreSchedule(clonePreSchedule);
-        setCopyPreSchedule(clonePreSchedule);
+        setDeleteOption(cloneDeleteOption);
+
     }, [dataState])
-
+    
     const [nextLessonsArr, setNextLessonsArr] = useState([])
-
+    
 
     useEffect(() => {
         let cloneNextLessonsArr = [];
@@ -90,17 +96,32 @@ const ModalDeleteLessons = () => {
         setNextLessonsArr(cloneNextLessonsArr);
     }, [preSchedule])
 
-    const [deleteOption, setDeleteOption] = useState([...Array(preSchedule.length).fill(false)])
 
     const [noticeMessage, setNoticeMessage] = useState('');
 
     const saveFunc = async() => {
+        let cloneDeleteOption = [...deleteOption];
+        let clonePreSchedule = [...preSchedule];
         
+        const deleteData = () => {
+            let i = 0;
+            while (i < cloneDeleteOption.length) {
+                if (cloneDeleteOption[i] === true) {
+                    cloneDeleteOption.splice(i,1);
+                    clonePreSchedule.splice(i,1);
+                } else {
+                    i++;
+                }
+            }
+        }
+        
+        await deleteData(); 
+        await dispatch(deleteScheduleNextLessonsAction(localStorage.getItem('uid'), localStorage.getItem('classChoosen'), clonePreSchedule))
+        location.reload();
     }
 
-    const sharedTravelTime = useSelector(state => state.sharedTravelTimeReducer.time);
 
-    const reRenderSameTravelTime = useSelector(state => state.reRenderSameTravelTimeReducer.reRender);
+    const loadingDelete = useSelector(state => state.deleteScheduleNextLessonsReducer.loading);
 
     const handleDelete = (index) => {
         let cloneDeleteOption = [...deleteOption];
@@ -113,6 +134,7 @@ const ModalDeleteLessons = () => {
     return(
         <div className={styles.containerElement}>  
             {onModalNotice && <ModalTemplateNotice message={noticeMessage} closeFunc={() => {dispatch(onModalNoticeAction(false))}} />}
+            {loadingDelete && <ModalLoading />}
             {nextLessonsArr && 
                 <>
                     {
@@ -125,6 +147,13 @@ const ModalDeleteLessons = () => {
                                             let minutes = (new Date(v2.date)).getMinutes()
                                             hours = hours < 10 ? '0' + hours : hours;
                                             minutes = minutes < 10 ? '0' + minutes : minutes;
+                                            let hoursE = (new Date(v2.dateEnd)).getHours()
+                                            let minutesE = (new Date(v2.dateEnd)).getMinutes()
+                                            hoursE = hoursE < 10 ? '0' + hoursE : hoursE;
+                                            minutesE = minutesE < 10 ? '0' + minutesE : minutesE;
+                                            let timeStart = `${hours}:${minutes}`
+                                            let timeEnd = `${hoursE}:${minutesE}`
+
                                             let date = (new Date(v2.date)).getDate(); 
                                             let month = (new Date(v2.date)).getMonth() + 1; 
                                             let year = (new Date(v2.date)).getFullYear(); 
@@ -141,7 +170,7 @@ const ModalDeleteLessons = () => {
                                                         </svg>}
                                                     </div>
                                                     <div className={styles.day}>{v2.dayOfWeek}</div>
-                                                    <div className={styles.time}>{`${hours}:${minutes}`}</div>
+                                                    <div className={styles.time}>{`${timeStart} - ${timeEnd}`}</div>
                                                     <div className={styles.date}>{`${date}/${month}/${year}`}</div>
                                                 </div>
                                             )
@@ -157,7 +186,7 @@ const ModalDeleteLessons = () => {
             }
             <div className={styles.footer}>
                 <div className={styles.exitBtn} onClick={() => {closeFunc()}}>Cancel</div>
-                <div className={styles.saveBtn} onClick={() => {saveFunc()}}>Save</div>
+                <div className={styles.saveBtn} onClick={() => {saveFunc()}}>Update</div>
             </div>
         </div>
     )

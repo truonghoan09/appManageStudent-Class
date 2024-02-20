@@ -21,7 +21,7 @@ const ModalSetSameTravelTime = () => {
     }
 
     const handleSave = () => {
-        dispatch(sharedTravelTimeAction(commonTime));
+        dispatch(sharedTravelTimeAction(travelTime.indexOf(commonTime)*5*60*1000));
         dispatch(reRenderSameTravelTimeAction(true));
         dispatch(onModalSameTravelTimeAction(false))
     }

@@ -2,16 +2,23 @@
     const { initializeApp } = require('firebase/app');
     const { firebaseConfig } = require("../firebase");
 
+
+
     initializeApp(firebaseConfig)
-    
+
+
+
     exports.handler = async (event, context) => {
         const db = getDatabase();
         try {            
             let uid = JSON.parse(event.body).data.uid;
             let idClass = JSON.parse(event.body).data.idClass;
-            let newSchedule = JSON.parse(event.body).data.newSchedule
-            const scheduleRef = ref(db, "users/" + uid + "/myClasses/" + idClass + "/schedule/")
-            await set(scheduleRef, newSchedule);
+            let isFixed = JSON.parse(event.body).data.boolean;
+
+            const noteRef = ref(db, "users/" + uid + "/myClasses/" + idClass + "/schedule/fixed/")
+            
+            set(noteRef, isFixed);
+            
             return{
                 statusCode: 200,
                 headers: {
@@ -20,7 +27,7 @@
                 },
                 body: JSON.stringify({
                     "errCode": 0,
-                    "message": "Update Schedule Next Lessons Follow Today Func is Done"
+                    "message": "Toggle Fixed Func is Done"
                 })
             }
         } catch (error) {

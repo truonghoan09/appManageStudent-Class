@@ -43,7 +43,7 @@
             border-collapse: collapse;
             padding: 0 0.3rem;
             padding-bottom: 0.2rem;
-            .day, .time{
+            .day, .time, .date{
                 text-align: center;
                 padding: 0.3rem 0rem;
                 margin: 0rem 0.5rem;
@@ -120,6 +120,7 @@
                 }
             }
             .redNotice {
+                box-shadow: none;
                 div{
                     border-color: rgb(248, 136, 136);
                 }
@@ -132,8 +133,17 @@
             width: 100%;
             text-align: center;
         }
-        select{
-            padding: 0.3rem 0.5rem;
+        .blockDurations{
+            display: flex;
+            gap: 0.3rem;
+        }
+        div{
+            select{
+                padding: 0.3rem 0.5rem;
+            }
+        }
+        div.redNotice{
+            box-shadow: rgb(254, 115, 115) 0px 0px 20px;
         }
         .blockTravelTime{
             display: flex;
