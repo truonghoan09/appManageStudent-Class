@@ -79,6 +79,8 @@ const Avatar = (props) => {
                         <>
                             <div onClick={() => handleClickProfile()} className={styles.menuItem}>Profile</div>
                             <div onClick={() => {window.location.pathname = "/classes-and-students"}} className={styles.menuItem}>All Classes and Students</div>
+                            <div onClick={() => {window.location.pathname = "/schedule"}} className={styles.menuItem}>Schedule</div>
+
                             <div onClick={() => handleClickLogout()} className={styles.menuItem}>Log out</div>
                         </>
                     }

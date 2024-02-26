@@ -8,6 +8,7 @@ const PATH = {
     PROFILE: '/profile/:id',
     DOC: '/doc',
     MAP: 'map',
+    SCHEDULE: "/schedule"
 }
 
 export default PATH

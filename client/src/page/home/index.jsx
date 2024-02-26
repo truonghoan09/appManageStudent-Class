@@ -13,6 +13,9 @@ import ModalLoading from '../../component/modal/modalLoading';
 import caculateLessonRealtime from '../../module/caculateLessonRealtime';
 import enRouteGif from "../../assets/enRoute.gif";
 import learningGif from "../../assets/learning.gif";
+import { Link } from 'react-router-dom';
+import DatePickerComponent from '../../component/calendar';
+import PickTimesAndDate from '../../component/pickTimesAndDate';
 
 
 const Home = () => {
@@ -32,7 +35,7 @@ const Home = () => {
     }, []);
 
     const classNow = useSelector(state => state.setClassnowReducer.class);
-    const dataState = useSelector(state => state.getUserDataReducer.data);
+    const dataState = useSelector(state => state.getUserDataReducer.data.getUserAPIData);
 
 
     useEffect(() => {
@@ -64,20 +67,21 @@ const Home = () => {
     const onModalAddHomeworkState = useSelector(state => state.onModalAddHomeworkReducer.onModal);
 
 
-    const [serverFail, setServerFail] = useState(false);
+    const [noClass, setNoClass] = useState(false);
 
     const [noteContent, setNoteContent] = useState('');
     const [editNote, setEditNote] = useState(false);
 
     useEffect(() => {
-        if(classNow !== null) {
+        if(dataState && dataState.data && (dataState.data.myClasses === "" || dataState.data.myClasses === undefined)){
             setTimeout(() => {
-                setServerFail(true);
+                setNoClass(true); 
+                localStorage.removeItem('classChoosen');
             }, 5000);
         } else { 
-            setServerFail(false)
+            setNoClass(false)
         }
-    }, [classNow])
+    }, [dataState, classNow])
 
     const handleSaveNote = async () => {
         await dispatch(updateNoteScheduleAction(localStorage.getItem("uid"), localStorage.getItem("classChoosen"), noteContent));
@@ -137,11 +141,14 @@ const Home = () => {
 
     const [resultSchedule, setResultSchedule] = useState();
 
+    const fetchDataError = useSelector(state => state.getUserDataReducer.error);
+
     useEffect(() => {
         const updateData = async () => {
             if(dataClassNow && resultSchedule) {
                 if( resultSchedule.lessonAtNow !== dataClassNow.schedule.lessonAtNow || 
                     (dataClassNow.schedule.nextLessons && resultSchedule.nextLessons && resultSchedule.nextLessons.length !== dataClassNow.schedule.nextLessons.length) || 
+                    (resultSchedule.nextLessons === undefined && dataClassNow.schedule.nextLessons) || 
                     (resultSchedule.enRoute !== dataClassNow.schedule.enRoute) || 
                     (!dataClassNow.schedule.nextLessons && dataClassNow.schedule.nextLessons !== resultSchedule.nextLessons)) {
                         await dispatch(updateScheduleNextLessonsFollowTodayAction(localStorage.getItem('uid'), localStorage.getItem('classChoosen'), resultSchedule))
@@ -172,6 +179,17 @@ const Home = () => {
     "05:00", "05:05", "05:10", "05:15", "05:20", "05:25", "05:30", "05:35", "05:40", "05:45", "05:50", "05:55", 
     "06:00"]
 
+    const [dataFromChild, setDataFromChild] = useState();
+
+    const handleDataFromChild = (data) => {
+        setDataFromChild(data);
+    }
+
+    useEffect(() => {
+        console.log(dataFromChild);
+    }, [dataFromChild])
+
+
     return(
         <>
             {loadingToggleFixedSchedule && 
@@ -197,8 +215,11 @@ const Home = () => {
                 element={<ModalDeleteLessons />}
             />}
             <div className={styles.container}>
+                <PickTimesAndDate onDataFromChild={handleDataFromChild} showBtn={true} minDate={new Date().getTime()}/>
+            {!fetchDataError ? 
+            <>
                 <div className={styles.headerPlaceholder}></div>
-                
+
                 {dataClassNow && classNow !== null ? 
                     <>  
                         <div className={styles.classNameBlock}>
@@ -242,7 +263,8 @@ const Home = () => {
                                     </div>
                                 </>
                             }
-                             {dataClassNow.schedule.fixed && dataClassNow.schedule.fixedSchedule !== "" ?
+
+                            {dataClassNow.schedule.fixed && (dataClassNow.schedule.fixedSchedule && dataClassNow.schedule.fixedSchedule !== "") ?
                                 <>
                                     <div className={styles.label}>
                                         Schedule
@@ -383,20 +405,21 @@ const Home = () => {
                     </> :
                     <>  
                         {classNow === null && !localStorage.getItem("uid") ?
-                            <div>Please Login</div> : 
+                            <div className={styles.contentSystem}>Please Login</div> : 
                             <>
-                                {localStorage.getItem("uid") && !serverFail ?
-                                    <div>Please wait while the system is fetching data...</div> :
-                                    <>
-                                        {
-                                            serverFail && <div>Server Error!</div>
-                                        }
-                                    </>
+                                {localStorage.getItem("uid") && !noClass ?
+                                    <div className={styles.contentSystem}>Please wait while the system is fetching data...</div> :
+                                    <div className={styles.contentSystem}>Currently, you have no classes! <Link to={'/classes-and-students'}>Click here</Link> to manage classes</div>
                                 }
                             </>
                             }
                     </>
                 }
+            </> 
+            : 
+            <>
+                <div>Check your internet connection and try again later!</div>
+            </>}
             </div>
         </>
     )

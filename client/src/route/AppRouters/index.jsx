@@ -8,7 +8,8 @@ import checkSignin from "../../module/checkSignin"
 import SignIn from "../../module/signIn"
 import MapInstructions from "../../page/mapInstructions"
 import { useDispatch } from "react-redux"
-import { getAllStudentsName, updateScheduleNextLessonsFollowTodayAction } from "../../redux/action"
+import { getAllStudentsName, getUserData, updateScheduleNextLessonsFollowTodayAction } from "../../redux/action"
+import SchedulePage from "../../page/schedule"
 
 
 const AppRouters = () => {
@@ -16,6 +17,7 @@ const AppRouters = () => {
     const fetchData = async ( ) => {
         await checkSignin();
         await dispatch(getAllStudentsName());
+        await dispatch(getUserData(localStorage.getItem("uid")));
     }
     fetchData();
     const element = useRoutes([
@@ -66,6 +68,16 @@ const AppRouters = () => {
                 {
                     path: PATH.MAP,
                     element: <MapInstructions />,
+                }
+            ]
+        },
+        {
+            path: PATH.SCHEDULE,
+            element: <Layout1 />,
+            children: [
+                {
+                    index: true,
+                    element: <SchedulePage />,
                 }
             ]
         },

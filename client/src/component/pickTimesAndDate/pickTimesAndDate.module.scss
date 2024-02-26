@@ -1,0 +1,85 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    border: 1px solid rgb(176, 176, 176);
+    padding: 1.5rem 1rem;
+    position: relative;
+    .blockInputDate{
+        display: flex;
+        gap: 0.25rem;
+        .itemInput{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-style: italic;
+            position: relative;
+            .label{
+                font-size: 0.8rem;
+                position: absolute;
+                background-color: white;
+                top: -10px;
+            }
+            .inputDate, .inputMonth, .inputYear, .inputHour, .inputMinute{
+                height: 1.7rem;
+                width: 2.2rem;
+                display: flex;
+                align-items: center;
+                padding: 0 0.4rem;
+                text-align: center;
+            }
+            .inputYear{
+                width: 3.2rem;
+            }
+            input::-webkit-inner-spin-button {
+                box-sizing: content-box;
+                -webkit-appearance: none;
+            }
+        }
+        .blockHourInput{
+            display: flex;
+            gap: 0.2rem;
+            margin-left: 0.6rem;
+        }
+    }
+    .containerBtn{
+        position: relative;
+        width: 100%;
+        margin: 0.4rem;
+        height: 1.2rem;
+        .blockBtn{
+            display: flex;
+            gap: 0.4rem;
+            position: absolute;
+            right: 0.8rem;
+            .cancelBtn, .pickBtn{
+                cursor: pointer;
+                border: 1px solid rgb(255, 77, 77);
+                border-radius: 3px;
+                background-color: rgb(255, 77, 77);
+                color: white;
+                padding: 0.2rem 0.5rem;
+                &:hover{
+                    background-color: rgb(245, 97, 97);
+                    border-color: rgb(245, 97, 97);
+                }
+                &:active{
+                    background-color: rgb(243, 66, 66);
+                    border-color: rgb(243, 66, 66);
+                }
+            }
+            .pickBtn{
+                border-color: rgb(82, 134, 238);
+                background-color: rgb(82, 134, 238);
+                &:hover{
+                    background-color: rgb(103, 149, 241);
+                    border-color: rgb(103, 149, 241);
+                }
+                &:active{
+                    background-color: rgb(56, 122, 255);
+                    border-color: rgb(56, 122, 255);
+                }
+            }
+        }
+    }
+}

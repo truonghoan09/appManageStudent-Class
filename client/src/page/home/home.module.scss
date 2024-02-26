@@ -26,6 +26,13 @@
     align-items: center;
     min-height: 80vh;
     flex-direction: column;
+    .contentSystem{
+        a{
+            cursor: pointer;
+            text-decoration: underline;
+            color: blue;
+        }
+    }
     .header{
         width: 100%;
         position: fixed;

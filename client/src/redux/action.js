@@ -137,14 +137,23 @@ export const getUserData = (uid) => {
 	return async (dispatch) => {
         dispatch({type: GET_USER_DATA_REQUEST})
         try {
-            let response = await fetch ("http://localhost:8888/.netlify/functions/getUserData", {
-                method: 'post',
-                body: JSON.stringify({     
-                    data: uid,
+            const [getUserAPIResponse, calMasterScheduleResponse] = await Promise.all([
+                fetch ("http://localhost:8888/.netlify/functions/getUserData", {
+                    method: 'post',
+                    body: JSON.stringify({     
+                        data: uid,
+                    })
+                }),
+                fetch ("http://localhost:8888/.netlify/functions/calMasterSchedule", {
+                    method: 'post',
+                    body: JSON.stringify({     
+                        data: uid,
+                    })
                 })
-            })
-            let responseData = await response.json();
-            dispatch({type: GET_USER_DATA_SUCCESS, payload: responseData})
+            ]) 
+            let getUserAPIData = await getUserAPIResponse.json();
+            let masterScheduleData = await calMasterScheduleResponse.json();
+            dispatch({type: GET_USER_DATA_SUCCESS, payload: {getUserAPIData, masterScheduleData}})
         } catch (error) {
             dispatch({type: GET_USER_DATA_FAILURE , error: error.message})
         }

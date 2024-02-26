@@ -1,0 +1,81 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    border: 1px solid rgb(176, 176, 176);
+    padding: 1.5rem 1rem;
+    .blockMonthYear{
+        width: 100%;
+        display: flex;
+        user-select: none;
+        svg{
+            height: 20px;
+            cursor: pointer;
+            &:hover{
+                scale: 1.04;
+            }
+        }
+        .monthAndYearName{
+            width: 80%;
+            display: flex;
+            justify-content: center;
+        }
+    }
+    .ARowOfCalendar{
+        display: flex;
+        gap: 0.3rem;
+        .dayItem{
+            height: 2rem;
+            width: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgb(193, 193, 193);
+            cursor: pointer;
+            border: solid 1px white;
+            &:hover{
+                background-color: rgb(239, 239, 239);
+                border: 1px solid rgb(186, 186, 255);
+                border-radius: 5px;
+            }
+        }
+        .inMonth{
+            color: black;
+        }
+        .currentDate{
+            background-color: rgb(15, 91, 255);
+            color: white;
+            border-radius: 6px;
+            &:hover{
+                background-color: rgb(49, 113, 252);
+            }
+        }
+        .disable{
+            background-color: rgb(217, 217, 217);
+            border-radius: 5px;
+            color: rgb(196, 196, 196);
+            cursor: not-allowed;
+            &:hover{
+                background-color: rgb(217, 217, 217);
+                border-color: white;
+            }
+        }
+        .inMonth.disable{
+            color: rgb(149, 149, 149);
+        }
+    }
+    .labelDayBlock{
+        display: flex;
+        user-select: none;
+        gap: 0.3rem;
+        .lable{
+            height: 2rem;
+            width: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgb(92, 92, 92);
+            border: solid 1px white;
+        }
+    }
+}

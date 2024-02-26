@@ -27,7 +27,7 @@ const StudentAndClass = () => {
         dispatch(getUserData(localStorage.getItem("uid")));
     }, [])
 
-    const dataState = useSelector(state => state.getUserDataReducer.data);
+    const dataState = useSelector(state => state.getUserDataReducer.data.getUserAPIData);
 
 
     useEffect(() => {

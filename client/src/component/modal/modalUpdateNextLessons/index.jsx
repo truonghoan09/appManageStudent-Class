@@ -189,7 +189,7 @@ const ModalUpdateNextLessons = () => {
         dispatch(getUserData(localStorage.getItem("uid")));
     }, [])
 
-    const dataState = useSelector(state => state.getUserDataReducer.data.data);
+    const dataState = useSelector(state => state.getUserDataReducer.data.getUserAPIData.data);
 
     const [preSchedule, setPreSchedule] = useState([]);
 
@@ -264,8 +264,8 @@ const ModalUpdateNextLessons = () => {
         await setRednoticePreSchedule(cloneRedNoticePreSchedule);
         await setRednoticeTravelTime(cloneRedNoticeTravelTime);
         if (cloneRedNoticePreSchedule.indexOf(true) === -1 && cloneRedNotice.indexOf(true) === -1 && cloneRedNoticeTravelTime.indexOf(true) === -1) {
-                dispatch(updateScheduleNextLessonsAction(localStorage.getItem("uid"), localStorage.getItem("classChoosen"), nextLessons))
-                dispatch(onModalUpdateNextLessonsAction(false))
+                await dispatch(updateScheduleNextLessonsAction(localStorage.getItem("uid"), localStorage.getItem("classChoosen"), nextLessons))
+                await dispatch(onModalUpdateNextLessonsAction(false))
                 location.reload();
         } else {
             setNoticeMessage('You cannot select time slots that overlap with saved classes or times in the past!');

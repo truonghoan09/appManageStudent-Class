@@ -62,7 +62,7 @@ const ModalDeleteLessons = () => {
         dispatch(getUserData(localStorage.getItem("uid")));
     }, [])
 
-    const dataState = useSelector(state => state.getUserDataReducer.data.data);
+    const dataState = useSelector(state => state.getUserDataReducer.data.getUserAPIData.data);
 
     const [preSchedule, setPreSchedule] = useState([]);
     const [deleteOption, setDeleteOption] = useState([])
